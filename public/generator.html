@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hochzeits-Einladung Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f5f0e8;
+      --parchment: #ede4d0;
+      --ink: #1e1a16;
+      --ink-soft: #3d3529;
+      --gold: #b8975a;
+      --gold-light: #d4b87a;
+      --sage: #8a9e82;
+      --sage-dark: #5c7055;
+      --rose: #c4836a;
+    }
+    body {
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'EB Garamond', serif;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0 2.5rem;
+      border-bottom: 1px solid rgba(184,151,90,0.3);
+      margin-bottom: 2.5rem;
+    }
+
+    .header-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-family: 'Cormorant Infant', serif;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--cream);
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      font-style: italic;
+      color: rgba(245,240,232,0.55);
+      margin-top: 0.8rem;
+    }
+
+    /* ── Form ── */
+    .form-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(184,151,90,0.2);
+      border-radius: 2px;
+      padding: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-section-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid rgba(184,151,90,0.2);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 560px) {
+      .form-row { grid-template-columns: 1fr; }
+      .form-section { padding: 1.5rem; }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--gold-light);
+      text-transform: uppercase;
+    }
+
+    input, textarea, select {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(184,151,90,0.25);
+      border-radius: 1px;
+      padding: 0.75rem 1rem;
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--cream);
+      outline: none;
+      transition: border-color 0.3s;
+      width: 100%;
+    }
+    input::placeholder, textarea::placeholder { color: rgba(245,240,232,0.3); }
+    input:focus, textarea:focus, select:focus { border-color: var(--gold); }
+    select option { background: #2a2418; color: var(--cream); }
+
+    textarea { resize: vertical; min-height: 100px; }
+
+    /* Style pills */
+    .style-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.6rem;
+      margin-top: 0.45rem;
+    }
+
+    @media (max-width: 480px) {
+      .style-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .style-pill {
+      border: 1px solid rgba(184,151,90,0.25);
+      padding: 0.6rem 0.4rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.55);
+      text-transform: uppercase;
+    }
+    .style-pill:hover { border-color: var(--gold); color: var(--gold); }
+    .style-pill.selected { background: rgba(184,151,90,0.15); border-color: var(--gold); color: var(--gold); }
+
+    /* Color scheme */
+    .color-grid {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-top: 0.45rem;
+    }
+
+    .color-swatch {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .color-swatch:hover { transform: scale(1.1); }
+    .color-swatch.selected { border-color: white; transform: scale(1.15); }
+
+    /* Generate button */
+    .generate-btn {
+      width: 100%;
+      padding: 1.1rem;
+      background: var(--rose);
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.82rem;
+      letter-spacing: 0.35em;
+      color: white;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+    .generate-btn:hover:not(:disabled) { background: #d4957a; letter-spacing: 0.45em; }
+    .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Progress */
+    .progress-wrap {
+      display: none;
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+    .progress-wrap.show { display: block; }
+
+    .progress-icon {
+      font-family: 'Cormorant Infant', serif;
+      font-size: 3rem;
+      font-style: italic;
+      color: var(--gold);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+    .progress-text {
+      font-style: italic;
+      color: rgba(245,240,232,0.6);
+      margin-top: 1rem;
+      font-size: 1.05rem;
+    }
+
+    .progress-steps {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(184,151,90,0.25);
+      transition: background 0.4s;
+    }
+    .step-dot.active { background: var(--gold); }
+    .step-dot.done { background: var(--sage); }
+
+    /* Preview */
+    .preview-wrap {
+      display: none;
+      margin-top: 2rem;
+    }
+    .preview-wrap.show { display: block; }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: rgba(184,151,90,0.1);
+      border: 1px solid rgba(184,151,90,0.25);
+      border-bottom: none;
+    }
+
+    .preview-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 0.8rem;
+    }
+
+    .action-btn {
+      padding: 0.5rem 1rem;
+      border: 1px solid rgba(184,151,90,0.4);
+      background: transparent;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.25s;
+    }
+    .action-btn:hover { background: rgba(184,151,90,0.15); }
+    .action-btn.primary { background: var(--rose); border-color: var(--rose); color: white; }
+    .action-btn.primary:hover { background: #d4957a; }
+
+    #preview-frame {
+      width: 100%;
+      height: 80vh;
+      border: 1px solid rgba(184,151,90,0.25);
+      background: white;
+    }
+
+    .error-msg {
+      background: rgba(196,131,106,0.15);
+      border: 1px solid rgba(196,131,106,0.4);
+      padding: 1rem 1.5rem;
+      font-style: italic;
+      color: var(--rose-light, #e8b49a);
+      margin-top: 1rem;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    /* ── Preview hint ── */
+    .preview-hint {
+      font-style: italic;
+      font-family: 'Cormorant Infant', serif;
+      font-size: 0.95rem;
+      color: var(--gold-light);
+      margin-top: 0.6rem;
+      opacity: 0.8;
+    }
+
+    /* ── Consent checkboxes ── */
+    .consent-section {
+      margin-bottom: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .consent-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      cursor: pointer;
+    }
+
+    .consent-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border: 1px solid rgba(184,151,90,0.4);
+      background: rgba(255,255,255,0.05);
+      cursor: pointer;
+      position: relative;
+      margin-top: 0.15rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .consent-item input[type="checkbox"]:checked {
+      background: rgba(184,151,90,0.2);
+      border-color: var(--gold);
+    }
+    .consent-item input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: var(--gold);
+      font-family: sans-serif;
+    }
+    .consent-item input[type="checkbox"]:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .consent-label {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.88rem;
+      color: rgba(245,240,232,0.6);
+      line-height: 1.55;
+      cursor: pointer;
+    }
+    .consent-label a {
+      color: var(--gold-light);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: rgba(212,184,122,0.4);
+      transition: color 0.2s;
+    }
+    .consent-label a:hover { color: var(--gold); }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="header-label">Automatischer Generator</p>
+    <h1>Hochzeits-Einladung<br>erstellen</h1>
+    <p class="subtitle">Füllt das Formular aus — eure persönliche Einladungsseite entsteht in Sekunden.</p>
+    <p class="preview-hint"
+       data-de="Kostenlose Vorschau — Bezahlung erst zum Veröffentlichen"
+       data-en="Free preview — payment only to publish">
+      Kostenlose Vorschau — Bezahlung erst zum Veröffentlichen
+    </p>
+  </header>
+
+  <!-- Section 1: Das Paar -->
+  <div class="form-section">
+    <p class="form-section-title">01 · Das Brautpaar</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Name Partner:in 1</label>
+        <input type="text" id="name1" placeholder="z.B. Sophia" value="Sophia"/>
+      </div>
+      <div class="form-group">
+        <label>Name Partner:in 2</label>
+        <input type="text" id="name2" placeholder="z.B. Maximilian" value="Maximilian"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Hochzeitsdatum</label>
+        <input type="text" id="datum" placeholder="z.B. 12. Juli 2025" value="12. Juli 2025"/>
+      </div>
+      <div class="form-group">
+        <label>Uhrzeit</label>
+        <input type="text" id="uhrzeit" placeholder="z.B. 14:00 Uhr" value="14:00 Uhr"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" id="location" placeholder="z.B. Schloss Elmau, Bayern" value="Schloss Elmau, Bayern"/>
+      </div>
+      <div class="form-group">
+        <label>RSVP Deadline</label>
+        <input type="text" id="rsvp-date" placeholder="z.B. 30. Mai 2025" value="30. Mai 2025"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Eure Geschichte -->
+  <div class="form-section">
+    <p class="form-section-title">02 · Eure Geschichte</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Wie habt ihr euch kennengelernt?</label>
+        <textarea id="kennengelernt" placeholder="z.B. In einem kleinen Café in München, bei einem Literaturabend...">In einem kleinen Café in München — ein zufälliges Gespräch, zwei erkaltete Cappuccinos, und das Gefühl dass dieser Abend kein Ende haben soll.</textarea>
+      </div>
+      <div class="form-group">
+        <label>Der Heiratsantrag</label>
+        <textarea id="antrag" placeholder="z.B. Auf einer Brücke in Venedig im Nebel...">Venedig im November. Regen, leere Gassen, eine Brücke im Nebel — und ein Ring, den Maximilian seit drei Monaten in seiner Jackentasche trug.</textarea>
+      </div>
+    </div>
+    <div class="form-group full" style="margin-top:0.5rem">
+      <label>Persönliche Nachricht an die Gäste</label>
+      <textarea id="nachricht" rows="4" placeholder="Was möchtet ihr euren Gästen sagen?">Ohne euch wären wir nicht die, die wir heute sind. Kommt und feiert mit uns — es wird Musik geben, Tanz, viel zu gutes Essen und Momente, die wir alle nie vergessen werden.</textarea>
+    </div>
+    <div class="form-group" style="margin-top:1rem">
+      <label>Dresscode</label>
+      <input type="text" id="dresscode" placeholder="z.B. Festlich, Gartenparty-Stil willkommen" value="Festlich · Gartenparty-Stil willkommen"/>
+    </div>
+  </div>
+
+  <!-- Section 3: Stil -->
+  <div class="form-section">
+    <p class="form-section-title">03 · Stil & Atmosphäre</p>
+    <div class="form-group">
+      <label>Hochzeits-Stil</label>
+      <div class="style-grid" id="style-grid">
+        <div class="style-pill selected" onclick="selectStyle(this,'romantisch-elegant')">Romantisch elegant</div>
+        <div class="style-pill" onclick="selectStyle(this,'boho-natur')">Boho & Natur</div>
+        <div class="style-pill" onclick="selectStyle(this,'modern-minimalistisch')">Modern minimal</div>
+        <div class="style-pill" onclick="selectStyle(this,'vintage-nostalgisch')">Vintage nostalgisch</div>
+        <div class="style-pill" onclick="selectStyle(this,'tropisch-bunt')">Tropisch bunt</div>
+        <div class="style-pill" onclick="selectStyle(this,'luxus-glamouroes')">Luxus glamourös</div>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:1.5rem">
+      <label>Farbschema</label>
+      <div class="color-grid" id="color-grid">
+        <div class="color-swatch selected" style="background: linear-gradient(135deg,#c4836a,#b8975a)" onclick="selectColor(this,'rose-gold')" title="Rose & Gold"></div>
+        <div class="color-swatch" style="background: linear-gradient(135deg,#8a9e82,#f0ddd4)" onclick="selectColor(this,'sage-blush')" title="Sage & Blush"></div>
+        <div class="color-swatch" style="background: linear-gradient(135deg,#2c3e50,#d4b87a)" onclick="selectColor(this,'navy-gold')" title="Navy & Gold"></div>
+        <div class="color-swatch" style="background: linear-gradient(135deg,#f9f3ec,#c9a0dc)" onclick="selectColor(this,'creme-lavendel')" title="Crème & Lavendel"></div>
+        <div class="color-swatch" style="background: linear-gradient(135deg,#1e1a16,#b8975a)" onclick="selectColor(this,'schwarz-gold')" title="Schwarz & Gold"></div>
+        <div class="color-swatch" style="background: linear-gradient(135deg,#e8f4f0,#3a7d6e)" onclick="selectColor(this,'mint-smaragd')" title="Mint & Smaragd"></div>
+        <div class="color-swatch" style="background: linear-gradient(135deg,#f9e4e1,#e8436f)" onclick="selectColor(this,'rosa-rot')" title="Rosa & Rot"></div>
+        <div class="color-swatch" style="background: linear-gradient(135deg,#f5f0e8,#8a9e82)" onclick="selectColor(this,'creme-sage')" title="Crème & Sage"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Consent -->
+  <div class="consent-section">
+    <label class="consent-item">
+      <input type="checkbox" id="consent-api" onchange="updateGenBtn()">
+      <span class="consent-label"
+            data-de='Ich stimme zu, dass meine Angaben zur Erstellung der Einladung an die Anthropic API übermittelt werden. Die Daten werden nicht dauerhaft gespeichert. <a href="datenschutz.html" target="_blank">Datenschutzerklärung lesen.</a>'
+            data-en='I agree that my details will be sent to the Anthropic API to generate the invitation. Data is not stored permanently. <a href="datenschutz.html" target="_blank">Read privacy policy.</a>'>
+        Ich stimme zu, dass meine Angaben zur Erstellung der Einladung an die Anthropic API übermittelt werden. Die Daten werden nicht dauerhaft gespeichert. <a href="datenschutz.html" target="_blank">Datenschutzerklärung lesen.</a>
+      </span>
+    </label>
+    <label class="consent-item">
+      <input type="checkbox" id="consent-rsvp" onchange="updateGenBtn()">
+      <span class="consent-label"
+            data-de="Ich bestätige, dass ich meine Gäste darüber informiere, dass ihre RSVP-Angaben (Name, Personenanzahl) gespeichert werden."
+            data-en="I confirm that I will inform my guests that their RSVP details (name, guest count) will be stored.">
+        Ich bestätige, dass ich meine Gäste darüber informiere, dass ihre RSVP-Angaben (Name, Personenanzahl) gespeichert werden.
+      </span>
+    </label>
+  </div>
+
+  <!-- Generate -->
+  <button class="generate-btn" id="gen-btn" onclick="generateInvitation()" disabled>
+    ✦ &nbsp; Einladung generieren
+  </button>
+
+  <div class="error-msg" id="error-msg"></div>
+
+  <!-- Progress -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-icon">✦</div>
+    <p class="progress-text" id="progress-text">Eure Einladung wird kreiert…</p>
+    <div class="progress-steps">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+      <div class="step-dot" id="dot-4"></div>
+    </div>
+  </div>
+
+  <!-- Preview -->
+  <div class="preview-wrap" id="preview-wrap">
+    <div class="preview-header">
+      <span class="preview-title">Eure Einladung — Vorschau</span>
+      <div class="preview-actions">
+        <button class="action-btn" onclick="editAgain()">← Bearbeiten</button>
+        <button class="action-btn" onclick="downloadHTML()">⬇ HTML laden</button>
+        <button class="action-btn primary" onclick="copyLink()">Link kopieren</button>
+      </div>
+    </div>
+    <iframe id="preview-frame"></iframe>
+  </div>
+
+</div>
+
+<script>
+let selectedStyle = 'romantisch-elegant';
+let selectedColor = 'rose-gold';
+let generatedHTML = '';
+
+function updateGenBtn() {
+  const ok = document.getElementById('consent-api').checked &&
+             document.getElementById('consent-rsvp').checked;
+  document.getElementById('gen-btn').disabled = !ok;
+}
+
+// Language switch helper — call switchLang('en') / switchLang('de') from outside
+function switchLang(lang) {
+  document.querySelectorAll('[data-de][data-en]').forEach(el => {
+    if (el.tagName === 'INPUT') return; // skip inputs
+    const text = el.getAttribute('data-' + lang);
+    if (text !== null) el.innerHTML = text;
+  });
+}
+
+function selectStyle(el, val) {
+  document.querySelectorAll('.style-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedStyle = val;
+}
+
+function selectColor(el, val) {
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedColor = val;
+}
+
+function setProgress(step, text) {
+  document.getElementById('progress-text').textContent = text;
+  for (let i = 1; i <= 4; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.className = 'step-dot';
+    if (i < step) dot.classList.add('done');
+    if (i === step) dot.classList.add('active');
+  }
+}
+
+async function generateInvitation() {
+  const data = {
+    name1: document.getElementById('name1').value.trim() || 'Sophie',
+    name2: document.getElementById('name2').value.trim() || 'Maximilian',
+    datum: document.getElementById('datum').value.trim(),
+    uhrzeit: document.getElementById('uhrzeit').value.trim(),
+    location: document.getElementById('location').value.trim(),
+    rsvpDate: document.getElementById('rsvp-date').value.trim(),
+    kennengelernt: document.getElementById('kennengelernt').value.trim(),
+    antrag: document.getElementById('antrag').value.trim(),
+    nachricht: document.getElementById('nachricht').value.trim(),
+    dresscode: document.getElementById('dresscode').value.trim(),
+    stil: selectedStyle,
+    farbe: selectedColor,
+  };
+
+  if (!data.name1 || !data.name2) {
+    showError('Bitte beide Namen eingeben.');
+    return;
+  }
+
+  document.getElementById('gen-btn').disabled = true;
+  document.getElementById('error-msg').classList.remove('show');
+  document.getElementById('progress-wrap').classList.add('show');
+  document.getElementById('preview-wrap').classList.remove('show');
+
+  setProgress(1, 'Stil & Atmosphäre wird festgelegt…');
+
+  const colorMap = {
+    'rose-gold': { primary: '#c4836a', secondary: '#b8975a', bg: '#f5f0e8', accent: '#e8b49a' },
+    'sage-blush': { primary: '#8a9e82', secondary: '#5c7055', bg: '#f4f8f2', accent: '#f0ddd4' },
+    'navy-gold': { primary: '#2c3e50', secondary: '#d4b87a', bg: '#f0f2f5', accent: '#b8975a' },
+    'creme-lavendel': { primary: '#9b6fc0', secondary: '#7b52a0', bg: '#faf6ff', accent: '#c9a0dc' },
+    'schwarz-gold': { primary: '#b8975a', secondary: '#d4b87a', bg: '#0d0b08', accent: '#f5f0e8' },
+    'mint-smaragd': { primary: '#3a7d6e', secondary: '#2d6258', bg: '#f0f9f7', accent: '#9eccc3' },
+    'rosa-rot': { primary: '#e8436f', secondary: '#c42050', bg: '#fff5f7', accent: '#f9c0d0' },
+    'creme-sage': { primary: '#5c7055', secondary: '#3d4f39', bg: '#f8f5ee', accent: '#8a9e82' },
+  };
+
+  const colors = colorMap[selectedColor] || colorMap['rose-gold'];
+
+  const stilMap = {
+    'romantisch-elegant': 'romantisch, elegant, klassisch mit floralen Elementen',
+    'boho-natur': 'boho, naturverbunden, locker, mit wilden Blumen und Holzelementen',
+    'modern-minimalistisch': 'modern, minimalistisch, klare Linien, viel Weißraum',
+    'vintage-nostalgisch': 'vintage, nostalgisch, sepia-Töne, antik, letterpress-Gefühl',
+    'tropisch-bunt': 'tropisch, bunt, frisch, Blätter und exotische Blumen',
+    'luxus-glamouroes': 'luxuriös, glamourös, gold, champagner, opulent',
+  };
+
+  const stilBeschreibung = stilMap[data.stil] || 'romantisch elegant';
+
+  await new Promise(r => setTimeout(r, 600));
+  setProgress(2, 'Persönliche Texte werden geschrieben…');
+
+  const prompt = `Du bist ein Experte für wunderschöne Hochzeits-Websites. Erstelle eine vollständige, selbst-enthaltene HTML-Seite als Hochzeits-Einladung.
+
+DATEN:
+- Brautpaar: ${data.name1} & ${data.name2}
+- Datum: ${data.datum} um ${data.uhrzeit}
+- Ort: ${data.location}
+- RSVP bis: ${data.rsvpDate}
+- Kennengelernt: ${data.kennengelernt}
+- Antrag: ${data.antrag}
+- Nachricht an Gäste: ${data.nachricht}
+- Dresscode: ${data.dresscode}
+- Stil: ${stilBeschreibung}
+- Farbpalette: Hauptfarbe ${colors.primary}, Akzentfarbe ${colors.secondary}, Hintergrund ${colors.bg}
+
+ANFORDERUNGEN:
+1. Vollständiges HTML mit eingebettetem CSS und JavaScript (keine externen Dateien außer Google Fonts)
+2. Google Fonts einbinden passend zum Stil
+3. Folgende Sektionen:
+   - Hero mit Namen groß, Datum, Ort, animiertem Hintergrundeffekt
+   - Persönlicher Brief an die Gäste (nutze die Nachricht als Basis, formuliere schön aus)
+   - Details-Karten (Datum, Uhrzeit, Ort, Dresscode)
+   - Unsere Geschichte (Kennengelernt + Antrag als Timeline)
+   - RSVP-Formular (mit Name, Personenanzahl, Ja/Nein Buttons, Bestätigungsmeldung)
+4. Scroll-Animationen (fade-in mit IntersectionObserver)
+5. Fallende Blütenblätter oder passende Partikel-Animation
+6. Responsive Design (mobile-first)
+7. Sehr hochwertig, professionell, emotional berührend
+8. Den Stil "${stilBeschreibung}" konsequent umsetzen
+9. Nur die Farben aus der angegebenen Palette verwenden
+
+Antworte NUR mit dem vollständigen HTML-Code, ohne Erklärungen, ohne Markdown-Backticks.`;
+
+  try {
+    await new Promise(r => setTimeout(r, 800));
+    setProgress(3, 'HTML & Animationen werden gebaut…');
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 8000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || result.error) {
+      throw new Error(result.error?.message || 'API-Fehler');
+    }
+
+    let html = result.content?.[0]?.text || '';
+    // Strip markdown backticks if present
+    html = html.replace(/^```html\n?/i, '').replace(/^```\n?/, '').replace(/\n?```$/, '').trim();
+
+    if (!html.includes('<!DOCTYPE') && !html.includes('<html')) {
+      throw new Error('Kein gültiges HTML erhalten.');
+    }
+
+    generatedHTML = html;
+
+    await new Promise(r => setTimeout(r, 600));
+    setProgress(4, 'Fast fertig — letzte Details…');
+    await new Promise(r => setTimeout(r, 500));
+
+    // Show preview
+    document.getElementById('progress-wrap').classList.remove('show');
+    document.getElementById('preview-wrap').classList.add('show');
+
+    const frame = document.getElementById('preview-frame');
+    frame.srcdoc = generatedHTML;
+
+  } catch (err) {
+    document.getElementById('progress-wrap').classList.remove('show');
+    showError('Fehler beim Generieren: ' + err.message + ' — Bitte API-Key prüfen oder erneut versuchen.');
+    document.getElementById('gen-btn').disabled = false;
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function editAgain() {
+  document.getElementById('preview-wrap').classList.remove('show');
+  document.getElementById('gen-btn').disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function downloadHTML() {
+  if (!generatedHTML) return;
+  const name1 = document.getElementById('name1').value.trim() || 'hochzeit';
+  const name2 = document.getElementById('name2').value.trim() || 'einladung';
+  const blob = new Blob([generatedHTML], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `einladung-${name1.toLowerCase()}-${name2.toLowerCase()}.html`.replace(/\s+/g, '-');
+  a.click();
+}
+
+function copyLink() {
+  // Placeholder — in echter Produktion: Deploy zu Netlify via API + URL zurückgeben
+  navigator.clipboard?.writeText(window.location.href)
+    .then(() => alert('In der Vollversion wird hier eure persönliche URL kopiert!\n\nFür echtes Hosting: Netlify-API-Integration nötig.'))
+    .catch(() => alert('Link-Feature benötigt Netlify-Integration.'));
+}
+</script>
+</body>
+</html>
