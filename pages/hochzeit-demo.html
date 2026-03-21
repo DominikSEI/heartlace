@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sophia & Maximilian · 12. Juli 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f7f2ea;
+      --parchment: #ede5d0;
+      --ink: #0f0d0a;
+      --ink-soft: #3a3428;
+      --gold: #b8955a;
+      --gold-light: #d4b07a;
+      --rose: #c4836a;
+      --sage: #8a9e82;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 5rem 2rem;
+      background: var(--ink);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #petals-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    .hero-inner { position: relative; z-index: 2; }
+
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.3s;
+    }
+
+    .hero-names {
+      font-family: 'Cormorant Infant', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(3.5rem, 10vw, 7.5rem);
+      color: var(--cream);
+      line-height: 1;
+      letter-spacing: -0.01em;
+      opacity: 0;
+      animation: fadeUp 1.2s ease forwards 0.5s;
+    }
+
+    .hero-amp {
+      color: var(--gold);
+      font-size: 0.7em;
+    }
+
+    .hero-divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      margin: 2rem auto;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 0.8s;
+    }
+
+    .hero-date {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(0.7rem, 2vw, 0.85rem);
+      letter-spacing: 0.4em;
+      color: rgba(247,242,234,0.7);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1s;
+    }
+
+    .hero-location {
+      font-style: italic;
+      color: rgba(247,242,234,0.5);
+      margin-top: 0.5rem;
+      font-size: 1.15rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1.15s;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 2s;
+    }
+    .hero-scroll span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.4em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .scroll-bar {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollAnim 2s ease-in-out infinite;
+    }
+    @keyframes scrollAnim { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.15)} }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ── SECTIONS ── */
+    section { padding: 5rem 2rem; }
+
+    .container { max-width: 760px; margin: 0 auto; }
+    .container-wide { max-width: 980px; margin: 0 auto; }
+
+    .eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.45em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+
+    h2 {
+      font-family: 'Cormorant Infant', serif;
+      font-weight: 300;
+      font-style: italic;
+      font-size: clamp(2rem, 5vw, 3rem);
+      color: var(--ink);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── LETTER ── */
+    #letter {
+      background: var(--parchment);
+      text-align: center;
+    }
+    .letter-body {
+      font-size: 1.2rem;
+      line-height: 2;
+      color: var(--ink-soft);
+      max-width: 620px;
+      margin: 0 auto;
+      font-style: italic;
+    }
+    .letter-signature {
+      margin-top: 2.5rem;
+      font-family: 'Cormorant Infant', serif;
+      font-style: italic;
+      font-size: 1.5rem;
+      color: var(--gold);
+    }
+
+    /* ── DETAILS ── */
+    #details { background: var(--cream); }
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
+    .detail-card {
+      background: white;
+      border: 1px solid rgba(184,149,90,0.2);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .detail-icon {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--gold);
+    }
+    .detail-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .detail-value {
+      font-family: 'Cormorant Infant', serif;
+      font-size: 1.2rem;
+      font-style: italic;
+      color: var(--ink);
+    }
+
+    /* ── STORY ── */
+    #story { background: var(--ink); }
+    #story h2, #story .eyebrow { color: var(--cream); }
+    #story .eyebrow { color: var(--gold); }
+
+    .timeline {
+      position: relative;
+      margin-top: 3rem;
+      padding-left: 2rem;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--gold), rgba(184,149,90,0.1));
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 3rem;
+      padding-left: 2rem;
+    }
+    .timeline-item::before {
+      content: '✦';
+      position: absolute;
+      left: -0.85rem;
+      top: 0.1rem;
+      color: var(--gold);
+      font-size: 0.7rem;
+    }
+    .timeline-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .timeline-text {
+      font-style: italic;
+      color: rgba(247,242,234,0.75);
+      font-size: 1.1rem;
+      line-height: 1.85;
+    }
+
+    /* ── RSVP ── */
+    #rsvp { background: var(--parchment); }
+    #rsvp h2 { text-align: center; }
+    #rsvp .eyebrow { text-align: center; display: block; }
+
+    .rsvp-form {
+      max-width: 560px;
+      margin: 2.5rem auto 0;
+      background: white;
+      border: 1px solid rgba(184,149,90,0.2);
+      padding: 2.5rem;
+    }
+
+    .form-group { margin-bottom: 1.4rem; }
+
+    .form-group label {
+      display: block;
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      border: 1px solid rgba(184,149,90,0.3);
+      background: var(--cream);
+      padding: 0.8rem 1rem;
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color 0.25s;
+      border-radius: 1px;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--gold); }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+
+    /* Attending buttons */
+    .attend-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .attend-btn {
+      padding: 0.85rem;
+      border: 1px solid rgba(184,149,90,0.3);
+      background: transparent;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s;
+      color: var(--ink-soft);
+    }
+    .attend-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .attend-btn.selected-yes { background: var(--sage); border-color: var(--sage); color: white; }
+    .attend-btn.selected-no { background: var(--rose); border-color: var(--rose); color: white; }
+
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--ink);
+      color: var(--cream);
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 0.5rem;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--gold); letter-spacing: 0.45em; }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .rsvp-notice {
+      text-align: center;
+      margin-top: 1rem;
+      padding: 1rem 1.5rem;
+      font-style: italic;
+      font-size: 0.95rem;
+      display: none;
+      border-radius: 1px;
+    }
+    .rsvp-notice.success {
+      display: block;
+      background: rgba(138,158,130,0.12);
+      border: 1px solid rgba(138,158,130,0.4);
+      color: #3d5c39;
+    }
+    .rsvp-notice.error {
+      display: block;
+      background: rgba(196,131,106,0.12);
+      border: 1px solid rgba(196,131,106,0.4);
+      color: #8a3a20;
+    }
+
+    .rsvp-deadline {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: rgba(15,13,10,0.4);
+      text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      text-align: center;
+      padding: 3rem 2rem;
+      color: rgba(247,242,234,0.3);
+      font-style: italic;
+      font-size: 0.95rem;
+    }
+    footer .footer-names {
+      font-family: 'Cormorant Infant', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 520px) {
+      .rsvp-form { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <canvas id="petals-canvas"></canvas>
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Wir heiraten</p>
+    <h1 class="hero-names">
+      Sophia<br>
+      <span class="hero-amp">&amp;</span><br>
+      Maximilian
+    </h1>
+    <div class="hero-divider"></div>
+    <p class="hero-date">12. Juli 2025 · 14:00 Uhr</p>
+    <p class="hero-location">Schloss Elmau, Bayern</p>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-bar"></div>
+  </div>
+</section>
+
+<!-- ── LETTER ── -->
+<section id="letter">
+  <div class="container reveal">
+    <span class="eyebrow">An unsere liebsten Menschen</span>
+    <p class="letter-body">
+      Ohne euch wären wir nicht die, die wir heute sind.<br>
+      Kommt und feiert mit uns — es wird Musik geben, Tanz,
+      viel zu gutes Essen und Momente, die wir alle nie vergessen werden.
+      Wir möchten diesen besonderen Tag mit den Menschen teilen,
+      die unser Leben so reich gemacht haben.
+    </p>
+    <p class="letter-signature">Sophia &amp; Maximilian</p>
+  </div>
+</section>
+
+<!-- ── DETAILS ── -->
+<section id="details">
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">Die Details</span>
+      <h2>Alles Wichtige<br>auf einen Blick</h2>
+    </div>
+    <div class="details-grid">
+      <div class="detail-card reveal">
+        <div class="detail-icon">✦</div>
+        <p class="detail-label">Datum</p>
+        <p class="detail-value">12. Juli 2025</p>
+      </div>
+      <div class="detail-card reveal">
+        <div class="detail-icon">◯</div>
+        <p class="detail-label">Uhrzeit</p>
+        <p class="detail-value">14:00 Uhr</p>
+      </div>
+      <div class="detail-card reveal">
+        <div class="detail-icon">◈</div>
+        <p class="detail-label">Ort</p>
+        <p class="detail-value">Schloss Elmau<br>Bayern</p>
+      </div>
+      <div class="detail-card reveal">
+        <div class="detail-icon">◇</div>
+        <p class="detail-label">Dresscode</p>
+        <p class="detail-value">Festlich<br>Gartenparty-Stil</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── OUR STORY ── -->
+<section id="story">
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">Unsere Geschichte</span>
+      <h2>Der Weg zu<br>diesem Tag</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <p class="timeline-label">Wie wir uns fanden</p>
+        <p class="timeline-text">
+          In einem kleinen Café in München — ein zufälliges Gespräch,
+          zwei erkaltete Cappuccinos, und das Gefühl, dass dieser Abend
+          kein Ende haben soll.
+        </p>
+      </div>
+      <div class="timeline-item reveal">
+        <p class="timeline-label">Der Antrag</p>
+        <p class="timeline-text">
+          Venedig im November. Regen, leere Gassen, eine Brücke im Nebel —
+          und ein Ring, den Maximilian seit drei Monaten in seiner
+          Jackentasche trug.
+        </p>
+      </div>
+      <div class="timeline-item reveal">
+        <p class="timeline-label">Und jetzt</p>
+        <p class="timeline-text">
+          Wir sagen Ja. Und wir möchten, dass ihr dabei seid.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RSVP ── -->
+<section id="rsvp">
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">Rückmeldung</span>
+      <h2>Kommt ihr?</h2>
+    </div>
+
+    <div class="rsvp-form reveal" id="rsvp-form-wrap">
+      <div class="form-group">
+        <label>Euer Name</label>
+        <input type="text" id="rsvp-name" placeholder="Vor- und Nachname"/>
+      </div>
+      <div class="form-group">
+        <label>Anzahl Personen</label>
+        <select id="rsvp-count">
+          <option value="1">1 Person</option>
+          <option value="2">2 Personen</option>
+          <option value="3">3 Personen</option>
+          <option value="4">4 Personen</option>
+          <option value="5">5 Personen</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Werdet ihr dabei sein?</label>
+        <div class="attend-btns">
+          <button class="attend-btn" id="btn-yes" onclick="selectAttending(true)">✓ &nbsp;Ja, wir kommen</button>
+          <button class="attend-btn" id="btn-no"  onclick="selectAttending(false)">✕ &nbsp;Leider nicht</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nachricht (optional)</label>
+        <textarea id="rsvp-message" placeholder="Allergien, besondere Wünsche, oder einfach ein paar liebe Worte …"></textarea>
+      </div>
+      <button class="submit-btn" id="rsvp-submit" onclick="submitRsvp()">
+        Anmeldung absenden
+      </button>
+    </div>
+
+    <div class="rsvp-notice" id="rsvp-notice"></div>
+    <p class="rsvp-deadline">Bitte bis zum <strong>30. Mai 2025</strong> anmelden</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p class="footer-names">Sophia &amp; Maximilian</p>
+  <p>12. Juli 2025 · Schloss Elmau</p>
+</footer>
+
+<script>
+// ── Petal animation ──────────────────────────────────────────────
+(function() {
+  const canvas = document.getElementById('petals-canvas');
+  const ctx = canvas.getContext('2d');
+  let petals = [];
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function createPetal() {
+    return {
+      x: Math.random() * canvas.width,
+      y: -20,
+      size: 3 + Math.random() * 5,
+      speedY: 0.6 + Math.random() * 1.2,
+      speedX: (Math.random() - 0.5) * 0.8,
+      rotation: Math.random() * Math.PI * 2,
+      rotSpeed: (Math.random() - 0.5) * 0.04,
+      opacity: 0.3 + Math.random() * 0.5,
+    };
+  }
+
+  for (let i = 0; i < 25; i++) {
+    const p = createPetal();
+    p.y = Math.random() * canvas.height;
+    petals.push(p);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    petals.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.fillStyle = '#b8955a';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, p.size, p.size * 1.6, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      p.y += p.speedY;
+      p.x += p.speedX;
+      p.rotation += p.rotSpeed;
+
+      if (p.y > canvas.height + 20) {
+        Object.assign(p, createPetal());
+      }
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── Scroll reveal ────────────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── RSVP Logic ───────────────────────────────────────────────────
+let attendingValue = null;
+
+function selectAttending(value) {
+  attendingValue = value;
+  const btnYes = document.getElementById('btn-yes');
+  const btnNo  = document.getElementById('btn-no');
+  btnYes.classList.toggle('selected-yes', value === true);
+  btnNo.classList.toggle('selected-no',  value === false);
+  btnYes.classList.toggle('selected-no', false);
+  btnNo.classList.toggle('selected-yes', false);
+}
+
+function getWeddingId() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id') || 'sophia-maximilian';
+}
+
+function showNotice(type, message) {
+  const el = document.getElementById('rsvp-notice');
+  el.className = 'rsvp-notice ' + type;
+  el.textContent = message;
+}
+
+async function submitRsvp() {
+  const name      = document.getElementById('rsvp-name').value.trim();
+  const count     = parseInt(document.getElementById('rsvp-count').value, 10);
+  const message   = document.getElementById('rsvp-message').value.trim();
+  const weddingId = getWeddingId();
+
+  // Validate
+  if (!name) {
+    showNotice('error', 'Bitte gebt euren Namen ein.');
+    return;
+  }
+  if (attendingValue === null) {
+    showNotice('error', 'Bitte wählt aus, ob ihr kommt.');
+    return;
+  }
+
+  // Check Supabase config
+  const supabaseUrl = window.SUPABASE_URL;
+  const supabaseKey = window.SUPABASE_KEY;
+  if (!supabaseUrl || !supabaseKey) {
+    showNotice('error', 'Konfigurationsfehler: Supabase ist nicht eingerichtet. Bitte Administrator kontaktieren.');
+    return;
+  }
+
+  const btn = document.getElementById('rsvp-submit');
+  btn.disabled = true;
+  btn.textContent = 'Wird gesendet …';
+
+  const payload = {
+    wedding_id:  weddingId,
+    guest_name:  name,
+    guest_count: count,
+    message:     message || null,
+    attending:   attendingValue,
+    created_at:  new Date().toISOString(),
+  };
+
+  try {
+    const client = supabase.createClient(supabaseUrl, supabaseKey);
+    const { error } = await client
+      .from('rsvp_responses')
+      .insert([payload]);
+
+    if (error) throw error;
+
+    // Success — hide form, show confirmation
+    document.getElementById('rsvp-form-wrap').style.display = 'none';
+    showNotice(
+      'success',
+      attendingValue
+        ? `Wunderbar, ${name}! Wir freuen uns riesig auf euch. Bis zum 12. Juli!`
+        : `Liebe/r ${name}, schade, dass ihr nicht dabei sein könnt. Wir denken an euch!`
+    );
+
+  } catch (err) {
+    // Error — keep form data, show error message
+    console.error('RSVP Fehler:', err);
+    showNotice(
+      'error',
+      'Leider ist ein Fehler aufgetreten: ' + (err.message || 'Unbekannter Fehler') +
+      ' — Bitte versucht es erneut oder kontaktiert uns direkt.'
+    );
+    btn.disabled = false;
+    btn.textContent = 'Anmeldung absenden';
+  }
+}
+</script>
+
+</body>
+</html>

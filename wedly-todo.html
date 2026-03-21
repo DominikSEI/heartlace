@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedly — To-Do Liste</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Jost:wght@300;400;500&family=Cinzel:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #0f0d0a; --ink2: #2a2520; --cream: #f7f2ea; --parchment: #ede5d0;
+      --gold: #b8955a; --gold-l: #d4b07a; --sage-d: #536950;
+      --green: #3b6d11; --green-bg: #eaf3de;
+      --warn: #854f0b; --warn-bg: #faeeda;
+      --blue: #185fa5; --blue-bg: #e6f1fb;
+      --gray: #5f5e5a; --gray-bg: #f1efe8;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--cream); color: var(--ink); font-family: 'Jost', sans-serif; font-weight: 300; min-height: 100vh; padding-bottom: 4rem; }
+
+    header { background: var(--ink); padding: 2rem 4vw 1.5rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
+    .header-logo { font-family: 'Cormorant Infant', serif; font-size: 2rem; font-style: italic; color: var(--cream); }
+    .header-logo span { color: var(--gold); }
+    .header-sub { font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.35em; color: rgba(247,242,234,0.45); text-transform: uppercase; }
+
+    .stats-bar { background: var(--parchment); padding: 1.2rem 4vw; display: flex; gap: 2rem; align-items: center; border-bottom: 1px solid rgba(184,149,90,0.2); flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-num { font-family: 'Cormorant Infant', serif; font-size: 2rem; font-weight: 400; color: var(--ink); line-height: 1; }
+    .stat-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.3em; color: var(--sage-d); text-transform: uppercase; margin-top: 0.2rem; }
+    .progress-wrap { flex: 1; min-width: 160px; }
+    .progress-label { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.3em; color: var(--sage-d); text-transform: uppercase; margin-bottom: 0.5rem; }
+    .progress-bar { height: 4px; background: rgba(184,149,90,0.2); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.4s ease; }
+
+    main { max-width: 780px; margin: 0 auto; padding: 2.5rem 4vw 0; }
+
+    .phase { margin-bottom: 2.5rem; }
+    .phase-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid rgba(184,149,90,0.2); }
+    .phase-badge { font-family: 'Cinzel', serif; font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; padding: 0.25rem 0.7rem; border-radius: 1px; }
+    .badge-now  { background: var(--warn-bg);  color: var(--warn); }
+    .badge-soon { background: var(--blue-bg);  color: var(--blue); }
+    .badge-mktg { background: var(--green-bg); color: var(--green); }
+    .badge-later{ background: var(--gray-bg);  color: var(--gray); }
+    .phase-title { font-family: 'Cormorant Infant', serif; font-size: 1.3rem; font-style: italic; color: var(--ink); }
+    .phase-count { margin-left: auto; font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--sage-d); }
+
+    .tasks { display: flex; flex-direction: column; gap: 6px; }
+
+    .task {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 0.9rem 1rem;
+      background: white;
+      border: 1px solid rgba(184,149,90,0.15);
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .task:hover { background: var(--parchment); border-color: rgba(184,149,90,0.3); }
+    .task.done { opacity: 0.5; }
+    .task.done .task-title { text-decoration: line-through; color: var(--sage-d); }
+
+    .check {
+      width: 20px; height: 20px; flex-shrink: 0; margin-top: 1px;
+      border: 1px solid rgba(184,149,90,0.4); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; color: white; font-size: 10px;
+    }
+    .task.done .check { background: var(--gold); border-color: var(--gold); }
+
+    .task-body { flex: 1; }
+    .task-title { font-size: 0.97rem; color: var(--ink); line-height: 1.4; }
+    .task-sub { font-size: 0.82rem; color: rgba(42,37,32,0.55); margin-top: 0.2rem; line-height: 1.5; }
+
+    .task-tag {
+      font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em;
+      text-transform: uppercase; padding: 0.2rem 0.6rem;
+      border: 1px solid rgba(184,149,90,0.3); color: var(--sage-d);
+      align-self: center; white-space: nowrap; flex-shrink: 0;
+    }
+
+    .reset-btn {
+      display: block; margin: 2rem auto 0;
+      font-family: 'Cinzel', serif; font-size: 0.62rem; letter-spacing: 0.3em;
+      text-transform: uppercase; padding: 0.6rem 1.5rem;
+      border: 1px solid rgba(184,149,90,0.3); background: transparent;
+      color: rgba(42,37,32,0.4); cursor: pointer; transition: all 0.2s;
+    }
+    .reset-btn:hover { border-color: var(--gold); color: var(--gold); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-logo">W<span>edly</span></div>
+    <div class="header-sub">Launch Checklist</div>
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num" id="s-done">0</div><div class="stat-label">Erledigt</div></div>
+  <div class="stat"><div class="stat-num" id="s-open">0</div><div class="stat-label">Offen</div></div>
+  <div class="stat"><div class="stat-num" id="s-pct">0%</div><div class="stat-label">Fortschritt</div></div>
+  <div class="progress-wrap">
+    <div class="progress-label">Gesamtfortschritt</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+  </div>
+</div>
+
+<main id="main"></main>
+<button class="reset-btn" onclick="resetAll()">Alle zurücksetzen</button>
+
+<script>
+const phases = [
+  {
+    label:"Jetzt", badge:"badge-now", title:"Diese Woche starten",
+    tasks:[
+      {title:"wedly.de Domain kaufen", sub:"united-domains.de oder namecheap.com — ca. 10 €/Jahr", tag:"Domain"},
+      {title:"GitHub Repository anlegen", sub:"github.com → New repo → 'wedly' → Dateien pushen", tag:"Tech"},
+      {title:"Netlify Account + erster Deploy", sub:"netlify.com → Import from GitHub → in 2 Min live", tag:"Hosting"},
+      {title:"Impressum & Datenschutz ausfüllen", sub:"Adresse, Telefon, E-Mail in pages/impressum.html eintragen", tag:"Legal"},
+      {title:"Anthropic API Key holen", sub:"console.anthropic.com → API Keys → in Netlify Env Variables eintragen", tag:"Tech"},
+      {title:"Supabase Account anlegen", sub:"supabase.com → New project → Region: Frankfurt (EU)", tag:"Tech"},
+      {title:"Claude Code Prompts ausführen", sub:"Supabase RSVP + Datenschutz-Checkbox + Wedly Branding", tag:"Tech"},
+    ]
+  },
+  {
+    label:"Bald", badge:"badge-soon", title:"Vor dem Launch",
+    tasks:[
+      {title:"Logo finalisieren & einbauen", sub:"Gemini ImageFX oder Midjourney → PNG → in alle HTML-Dateien", tag:"Design"},
+      {title:"E-Mail hello@wedly.de einrichten", sub:"Zoho Mail (kostenlos) oder Hetzner — professioneller als Gmail", tag:"Mail"},
+      {title:"Domain mit Netlify verbinden", sub:"Netlify → Domain settings → DNS beim Registrar anpassen", tag:"Hosting"},
+      {title:"Stripe Account & Checkout einrichten", sub:"stripe.com → Payment Link erstellen → Button im Generator einbauen", tag:"Payment"},
+      {title:"Kompletten Flow testen", sub:"Formular ausfüllen → Generierung → RSVP → Bezahlung durchspielen", tag:"QA"},
+      {title:"Datenschutz um Stripe & Supabase ergänzen", sub:"Beide Dienste in pages/datenschutz.html als Auftragsverarbeiter eintragen", tag:"Legal"},
+      {title:"Gewerbe anmelden", sub:"Gewerbeamt München — online möglich über gewerberegister.de, ca. 26 €", tag:"Legal"},
+    ]
+  },
+  {
+    label:"Marketing", badge:"badge-mktg", title:"Sichtbarkeit aufbauen",
+    tasks:[
+      {title:"Instagram Account @wedly.de anlegen", sub:"Fokus: animierte Einladungs-Screenshots, Stil-Vergleiche, Testimonials", tag:"Social"},
+      {title:"TikTok Account anlegen", sub:"'Einladung in 60 Sekunden' als Reels-Format — bester organischer Reach", tag:"Social"},
+      {title:"Erstes Showcase-Video erstellen", sub:"Screen-Recording: Generator ausfüllen → fertige Einladung. Kein Schnitt nötig.", tag:"Content"},
+      {title:"Pinterest-Profil anlegen", sub:"Hochzeitsplanung = riesiges Pinterest-Publikum. Screenshots pinnen.", tag:"Social"},
+      {title:"5 erste Kunden ansprechen", sub:"Bekannte, Familie — kostenlos gegen ehrliches Feedback & Testimonial", tag:"Sales"},
+      {title:"Hochzeits-Facebook-Gruppen beitreten", sub:"Große DE-Gruppen: 'Hochzeitsplanung Deutschland' etc. — Wedly vorstellen", tag:"Social"},
+      {title:"Google Business Profil anlegen", sub:"Für lokale Auffindbarkeit und spätere Bewertungen", tag:"SEO"},
+    ]
+  },
+  {
+    label:"Später", badge:"badge-later", title:"Wachstum & Erweiterung",
+    tasks:[
+      {title:"Plausible.io Analytics einbauen", sub:"DSGVO-konformes Google Analytics Alternative — EU-Server, kostenlos bis 10k Besucher", tag:"Analytics"},
+      {title:"Geburtstags-Einladungen als zweites Produkt", sub:"Gleicher Generator, anderer Prompt-Stil — schnell umsetzbar", tag:"Produkt"},
+      {title:"Affiliate-Programm für Hochzeitsplaner", sub:"Planer empfehlen Wedly → 15 % Provision pro Verkauf", tag:"Sales"},
+      {title:"SEO-Blog starten", sub:"'Digitale Hochzeitseinladung Ideen 2025' — langfristiger Suchtrend", tag:"SEO"},
+      {title:"Bewertungen auf Trustpilot sammeln", sub:"Nach jedem Kauf automatisch per E-Mail um Bewertung bitten", tag:"Trust"},
+      {title:"Englischen Markt ausbauen", sub:"UK-Hochzeiten, andere Keywords, ggf. anderes Pricing in £", tag:"Wachstum"},
+      {title:"Taufe & Babyparty Einladungen", sub:"Emotional, hohe Zahlungsbereitschaft — dritte Produktlinie", tag:"Produkt"},
+    ]
+  }
+];
+
+const STORAGE_KEY = 'wedly-todo-v1';
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+let allCount = 0;
+
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+function updateStats() {
+  const done = Object.values(state).filter(Boolean).length;
+  const total = allCount;
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-open').textContent = total - done;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('s-pct').textContent = pct + '%';
+  document.getElementById('prog').style.width = pct + '%';
+}
+
+function updatePhaseCount(phaseEl, start, len) {
+  const done = Array.from({length: len}, (_, i) => state[start + i]).filter(Boolean).length;
+  phaseEl.querySelector('.phase-count').textContent = done + ' / ' + len;
+}
+
+const main = document.getElementById('main');
+let globalIdx = 0;
+
+phases.forEach(phase => {
+  const phaseStart = globalIdx;
+  const phaseEl = document.createElement('div');
+  phaseEl.className = 'phase';
+  phaseEl.innerHTML = `
+    <div class="phase-header">
+      <span class="phase-badge ${phase.badge}">${phase.label}</span>
+      <span class="phase-title">${phase.title}</span>
+      <span class="phase-count"></span>
+    </div>
+    <div class="tasks"></div>
+  `;
+  const tasksEl = phaseEl.querySelector('.tasks');
+
+  phase.tasks.forEach(task => {
+    const idx = globalIdx++;
+    allCount++;
+    const el = document.createElement('div');
+    el.className = 'task' + (state[idx] ? ' done' : '');
+    el.innerHTML = `
+      <div class="check">${state[idx] ? '✓' : ''}</div>
+      <div class="task-body">
+        <div class="task-title">${task.title}</div>
+        <div class="task-sub">${task.sub}</div>
+      </div>
+      <span class="task-tag">${task.tag}</span>
+    `;
+    el.onclick = () => {
+      state[idx] = !state[idx];
+      el.classList.toggle('done', state[idx]);
+      el.querySelector('.check').textContent = state[idx] ? '✓' : '';
+      save();
+      updateStats();
+      updatePhaseCount(phaseEl, phaseStart, phase.tasks.length);
+    };
+    tasksEl.appendChild(el);
+  });
+
+  main.appendChild(phaseEl);
+  updatePhaseCount(phaseEl, phaseStart, phase.tasks.length);
+});
+
+function resetAll() {
+  if (!confirm('Wirklich alle Häkchen entfernen?')) return;
+  state = {};
+  save();
+  document.querySelectorAll('.task').forEach(el => {
+    el.classList.remove('done');
+    el.querySelector('.check').textContent = '';
+  });
+  document.querySelectorAll('.phase').forEach((phaseEl, i) => {
+    updatePhaseCount(phaseEl, phases.slice(0,i).reduce((s,p)=>s+p.tasks.length,0), phases[i].tasks.length);
+  });
+  updateStats();
+}
+
+updateStats();
+</script>
+</body>
+</html>

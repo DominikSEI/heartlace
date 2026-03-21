@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedly · Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f7f2ea;
+      --parchment: #ede5d0;
+      --ink: #0f0d0a;
+      --ink-soft: #3a3428;
+      --gold: #b8955a;
+      --gold-light: #d4b07a;
+      --rose: #c4836a;
+      --sage: #8a9e82;
+      --white: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      min-height: 100vh;
+    }
+
+    /* ── PASSWORD SCREEN ── */
+    #auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ink);
+      padding: 2rem;
+    }
+
+    .auth-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(184,149,90,0.3);
+      padding: 3rem 2.5rem;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .auth-logo {
+      font-family: 'Cormorant Infant', serif;
+      font-style: italic;
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--gold);
+      margin-bottom: 0.3rem;
+    }
+
+    .auth-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      color: rgba(247,242,234,0.35);
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+    }
+
+    .auth-box input[type="password"] {
+      width: 100%;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(184,149,90,0.25);
+      padding: 0.85rem 1rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      color: var(--cream);
+      outline: none;
+      transition: border-color 0.25s;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .auth-box input[type="password"]:focus { border-color: var(--gold); }
+    .auth-box input[type="password"]::placeholder { color: rgba(247,242,234,0.2); letter-spacing: 0.1em; }
+
+    .auth-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--gold);
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .auth-btn:hover { background: var(--gold-light); letter-spacing: 0.45em; }
+
+    .auth-error {
+      margin-top: 1rem;
+      font-size: 0.65rem;
+      color: var(--rose);
+      letter-spacing: 0.15em;
+      min-height: 1.2em;
+    }
+
+    /* ── ADMIN LAYOUT ── */
+    #admin-screen { display: none; }
+
+    .admin-nav {
+      background: var(--ink);
+      padding: 1.2rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgba(184,149,90,0.2);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Infant', serif;
+      font-style: italic;
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--gold);
+    }
+    .nav-logo small {
+      font-family: 'Cinzel', serif;
+      font-style: normal;
+      font-size: 0.55rem;
+      letter-spacing: 0.35em;
+      color: rgba(247,242,234,0.35);
+      margin-left: 0.75rem;
+      text-transform: uppercase;
+      vertical-align: middle;
+    }
+
+    .nav-right { display: flex; gap: 1rem; align-items: center; }
+
+    .nav-btn {
+      padding: 0.5rem 1.2rem;
+      border: 1px solid rgba(184,149,90,0.35);
+      background: transparent;
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: rgba(184,149,90,0.12); }
+    .nav-btn.primary { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+    .nav-btn.primary:hover { background: var(--gold-light); }
+
+    /* ── MAIN CONTENT ── */
+    .admin-main { padding: 2.5rem; max-width: 1200px; margin: 0 auto; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar label {
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .filter-bar select,
+    .filter-bar input {
+      background: white;
+      border: 1px solid rgba(184,149,90,0.25);
+      padding: 0.55rem 0.85rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      color: var(--ink);
+      outline: none;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+    }
+    .filter-bar select:focus,
+    .filter-bar input:focus { border-color: var(--gold); }
+
+    /* ── SUMMARY CARDS ── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid rgba(184,149,90,0.18);
+      padding: 1.5rem 1.2rem;
+      text-align: center;
+    }
+
+    .summary-num {
+      font-family: 'Cormorant Infant', serif;
+      font-size: 2.8rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .summary-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      color: rgba(15,13,10,0.45);
+      text-transform: uppercase;
+    }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: white;
+      border: 1px solid rgba(184,149,90,0.18);
+      overflow-x: auto;
+    }
+
+    .table-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(184,149,90,0.15);
+      background: rgba(247,242,234,0.5);
+    }
+
+    .table-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+
+    thead {
+      background: rgba(184,149,90,0.07);
+    }
+
+    th {
+      font-size: 0.58rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding: 0.85rem 1.2rem;
+      text-align: left;
+      font-weight: 500;
+      white-space: nowrap;
+      border-bottom: 1px solid rgba(184,149,90,0.15);
+    }
+
+    td {
+      padding: 0.85rem 1.2rem;
+      border-bottom: 1px solid rgba(184,149,90,0.08);
+      font-family: 'Cormorant Infant', serif;
+      font-size: 1rem;
+      color: var(--ink-soft);
+      vertical-align: top;
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    tr:hover td { background: rgba(247,242,234,0.6); }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.7rem;
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border-radius: 1px;
+    }
+    .badge-yes { background: rgba(138,158,130,0.15); color: #3d5c39; border: 1px solid rgba(138,158,130,0.35); }
+    .badge-no  { background: rgba(196,131,106,0.12); color: #7a3020; border: 1px solid rgba(196,131,106,0.3); }
+
+    .wedding-id-pill {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      background: rgba(184,149,90,0.08);
+      border: 1px solid rgba(184,149,90,0.2);
+      padding: 0.2rem 0.5rem;
+      display: inline-block;
+    }
+
+    .message-cell {
+      font-style: italic;
+      color: rgba(58,52,40,0.65);
+      font-size: 0.95rem;
+      max-width: 220px;
+    }
+
+    .date-cell {
+      font-family: 'Cinzel', serif;
+      font-size: 0.62rem;
+      letter-spacing: 0.05em;
+      color: rgba(15,13,10,0.4);
+      white-space: nowrap;
+    }
+
+    /* ── EMPTY / LOADING ── */
+    .state-msg {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-family: 'Cormorant Infant', serif;
+      font-style: italic;
+      font-size: 1.3rem;
+      color: rgba(15,13,10,0.3);
+    }
+
+    /* ── LOGOUT ── */
+    .logout-btn {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: rgba(247,242,234,0.35);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .logout-btn:hover { color: var(--rose); }
+
+    @media (max-width: 600px) {
+      .admin-nav { padding: 1rem 1.2rem; }
+      .admin-main { padding: 1.5rem 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── PASSWORD SCREEN ── -->
+<div id="auth-screen">
+  <div class="auth-box">
+    <p class="auth-logo">Wedly</p>
+    <p class="auth-label">Admin · Zugang</p>
+    <input type="password" id="pw-input" placeholder="Passwort" onkeydown="if(event.key==='Enter') login()"/>
+    <button class="auth-btn" onclick="login()">Einloggen</button>
+    <p class="auth-error" id="auth-error"></p>
+  </div>
+</div>
+
+<!-- ── ADMIN SCREEN ── -->
+<div id="admin-screen">
+  <nav class="admin-nav">
+    <div class="nav-logo">
+      Wedly
+      <small>Admin</small>
+    </div>
+    <div class="nav-right">
+      <button class="nav-btn primary" onclick="exportCSV()">CSV exportieren</button>
+      <button class="nav-btn" onclick="loadData()">↻ Aktualisieren</button>
+      <button class="logout-btn" onclick="logout()">Abmelden</button>
+    </div>
+  </nav>
+
+  <main class="admin-main">
+
+    <!-- Filter -->
+    <div class="filter-bar">
+      <label>Hochzeit</label>
+      <select id="filter-wedding" onchange="applyFilter()">
+        <option value="">Alle Einladungen</option>
+      </select>
+      <label>Zusage</label>
+      <select id="filter-attending" onchange="applyFilter()">
+        <option value="">Alle</option>
+        <option value="true">Zugesagt</option>
+        <option value="false">Abgesagt</option>
+      </select>
+      <input type="text" id="filter-search" placeholder="Name suchen …" oninput="applyFilter()" style="flex:1; min-width:160px;">
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-grid">
+      <div class="summary-card">
+        <p class="summary-num" id="s-total">—</p>
+        <p class="summary-label">Rückmeldungen</p>
+      </div>
+      <div class="summary-card">
+        <p class="summary-num" id="s-guests">—</p>
+        <p class="summary-label">Gäste gesamt</p>
+      </div>
+      <div class="summary-card">
+        <p class="summary-num" id="s-yes">—</p>
+        <p class="summary-label">Zusagen</p>
+      </div>
+      <div class="summary-card">
+        <p class="summary-num" id="s-no">—</p>
+        <p class="summary-label">Absagen</p>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <span class="table-title">RSVP · Einträge</span>
+      </div>
+      <div id="table-container">
+        <p class="state-msg">Daten werden geladen …</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── Auth ─────────────────────────────────────────────────────────
+function login() {
+  const input    = document.getElementById('pw-input').value;
+  const expected = window.ADMIN_PASSWORD;
+
+  if (!expected) {
+    // Allow entry without password check if ADMIN_PASSWORD not set (dev mode)
+    showAdmin();
+    return;
+  }
+
+  if (input === expected) {
+    showAdmin();
+  } else {
+    document.getElementById('auth-error').textContent = 'Falsches Passwort.';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+function showAdmin() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+  loadData();
+}
+
+function logout() {
+  document.getElementById('admin-screen').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('pw-input').value = '';
+  allData = [];
+}
+
+// ── Data ─────────────────────────────────────────────────────────
+let allData = [];
+let filteredData = [];
+
+function getClient() {
+  const url = window.SUPABASE_URL;
+  const key = window.SUPABASE_KEY;
+  if (!url || !key) throw new Error('Supabase nicht konfiguriert (SUPABASE_URL / SUPABASE_KEY fehlen).');
+  return supabase.createClient(url, key);
+}
+
+async function loadData() {
+  document.getElementById('table-container').innerHTML = '<p class="state-msg">Daten werden geladen …</p>';
+
+  try {
+    const client = getClient();
+    const { data, error } = await client
+      .from('rsvp_responses')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    allData = data || [];
+    populateWeddingFilter();
+    applyFilter();
+
+  } catch (err) {
+    document.getElementById('table-container').innerHTML =
+      `<p class="state-msg" style="color:#c4836a;">Fehler beim Laden: ${err.message}</p>`;
+  }
+}
+
+function populateWeddingFilter() {
+  const select = document.getElementById('filter-wedding');
+  const current = select.value;
+  const ids = [...new Set(allData.map(r => r.wedding_id).filter(Boolean))].sort();
+
+  // Keep "Alle" option
+  select.innerHTML = '<option value="">Alle Einladungen</option>';
+  ids.forEach(id => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = id;
+    if (id === current) opt.selected = true;
+    select.appendChild(opt);
+  });
+}
+
+function applyFilter() {
+  const weddingFilter   = document.getElementById('filter-wedding').value;
+  const attendingFilter = document.getElementById('filter-attending').value;
+  const searchFilter    = document.getElementById('filter-search').value.toLowerCase().trim();
+
+  filteredData = allData.filter(r => {
+    if (weddingFilter && r.wedding_id !== weddingFilter) return false;
+    if (attendingFilter !== '' && String(r.attending) !== attendingFilter) return false;
+    if (searchFilter && !r.guest_name?.toLowerCase().includes(searchFilter)) return false;
+    return true;
+  });
+
+  updateSummary(filteredData);
+  renderTable(filteredData);
+}
+
+function updateSummary(rows) {
+  const total  = rows.length;
+  const yes    = rows.filter(r => r.attending === true).length;
+  const no     = rows.filter(r => r.attending === false).length;
+  const guests = rows.reduce((sum, r) => sum + (r.guest_count || 0), 0);
+
+  document.getElementById('s-total').textContent  = total;
+  document.getElementById('s-guests').textContent = guests;
+  document.getElementById('s-yes').textContent    = yes;
+  document.getElementById('s-no').textContent     = no;
+}
+
+function renderTable(rows) {
+  if (rows.length === 0) {
+    document.getElementById('table-container').innerHTML =
+      '<p class="state-msg">Keine Einträge gefunden.</p>';
+    return;
+  }
+
+  const tbody = rows.map(r => {
+    const date = r.created_at
+      ? new Date(r.created_at).toLocaleString('de-DE', { dateStyle: 'short', timeStyle: 'short' })
+      : '—';
+    const badge = r.attending
+      ? '<span class="badge badge-yes">Zugesagt</span>'
+      : '<span class="badge badge-no">Abgesagt</span>';
+    const wid = r.wedding_id
+      ? `<span class="wedding-id-pill">${esc(r.wedding_id)}</span>`
+      : '<span style="opacity:.3">—</span>';
+    const msg = r.message
+      ? `<span class="message-cell">${esc(r.message)}</span>`
+      : '<span style="opacity:.3; font-style:italic; font-family:Cormorant Infant,serif;">—</span>';
+
+    return `<tr>
+      <td>${esc(r.guest_name || '—')}</td>
+      <td style="text-align:center">${r.guest_count ?? '—'}</td>
+      <td>${badge}</td>
+      <td>${wid}</td>
+      <td>${msg}</td>
+      <td class="date-cell">${date}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('table-container').innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Personen</th>
+          <th>Zusage</th>
+          <th>Hochzeit</th>
+          <th>Nachricht</th>
+          <th>Eingegangen</th>
+        </tr>
+      </thead>
+      <tbody>${tbody}</tbody>
+    </table>`;
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── CSV Export ───────────────────────────────────────────────────
+function exportCSV() {
+  if (filteredData.length === 0) {
+    alert('Keine Daten zum Exportieren.');
+    return;
+  }
+
+  const headers = ['Name', 'Personen', 'Zusage', 'Hochzeit', 'Nachricht', 'Eingegangen'];
+  const rows = filteredData.map(r => [
+    r.guest_name   || '',
+    r.guest_count  ?? '',
+    r.attending === true ? 'Ja' : r.attending === false ? 'Nein' : '',
+    r.wedding_id   || '',
+    r.message      || '',
+    r.created_at ? new Date(r.created_at).toLocaleString('de-DE') : '',
+  ]);
+
+  const csvContent = [headers, ...rows]
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const bom  = '\uFEFF'; // UTF-8 BOM for Excel compatibility
+  const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `rsvp-export-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>

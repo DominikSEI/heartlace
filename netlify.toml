@@ -1,0 +1,24 @@
+[build]
+  publish = "public"
+
+[[redirects]]
+  from = "/impressum"
+  to = "/pages/impressum.html"
+  status = 200
+
+[[redirects]]
+  from = "/datenschutz"
+  to = "/pages/datenschutz.html"
+  status = 200
+
+[[redirects]]
+  from = "/generator"
+  to = "/pages/generator.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
