@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Wedly — To-Do Liste</title>
+  <title>Heartlace — To-Do Liste</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Infant:ital,wght@0,300;1,300&family=Jost:wght@300;400;500&family=Cinzel:wght@400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -115,20 +115,20 @@ const phases = [
   {
     label:"Jetzt", badge:"badge-now", title:"Diese Woche starten",
     tasks:[
-      {title:"wedly.de Domain kaufen", sub:"united-domains.de oder namecheap.com — ca. 10 €/Jahr", tag:"Domain"},
-      {title:"GitHub Repository anlegen", sub:"github.com → New repo → 'wedly' → Dateien pushen", tag:"Tech"},
+      {title:"heartlace.com Domain kaufen", sub:"united-domains.de oder namecheap.com — ca. 10 €/Jahr", tag:"Domain"},
+      {title:"GitHub Repository anlegen", sub:"github.com → New repo → 'heartlace' → Dateien pushen", tag:"Tech"},
       {title:"Netlify Account + erster Deploy", sub:"netlify.com → Import from GitHub → in 2 Min live", tag:"Hosting"},
       {title:"Impressum & Datenschutz ausfüllen", sub:"Adresse, Telefon, E-Mail in pages/impressum.html eintragen", tag:"Legal"},
       {title:"Anthropic API Key holen", sub:"console.anthropic.com → API Keys → in Netlify Env Variables eintragen", tag:"Tech"},
       {title:"Supabase Account anlegen", sub:"supabase.com → New project → Region: Frankfurt (EU)", tag:"Tech"},
-      {title:"Claude Code Prompts ausführen", sub:"Supabase RSVP + Datenschutz-Checkbox + Wedly Branding", tag:"Tech"},
+      {title:"Claude Code Prompts ausführen", sub:"Supabase RSVP + Datenschutz-Checkbox + Heartlace Branding", tag:"Tech"},
     ]
   },
   {
     label:"Bald", badge:"badge-soon", title:"Vor dem Launch",
     tasks:[
       {title:"Logo finalisieren & einbauen", sub:"Gemini ImageFX oder Midjourney → PNG → in alle HTML-Dateien", tag:"Design"},
-      {title:"E-Mail hello@wedly.de einrichten", sub:"Zoho Mail (kostenlos) oder Hetzner — professioneller als Gmail", tag:"Mail"},
+      {title:"E-Mail hello@heartlace.com einrichten", sub:"Zoho Mail (kostenlos) oder Hetzner — professioneller als Gmail", tag:"Mail"},
       {title:"Domain mit Netlify verbinden", sub:"Netlify → Domain settings → DNS beim Registrar anpassen", tag:"Hosting"},
       {title:"Stripe Account & Checkout einrichten", sub:"stripe.com → Payment Link erstellen → Button im Generator einbauen", tag:"Payment"},
       {title:"Kompletten Flow testen", sub:"Formular ausfüllen → Generierung → RSVP → Bezahlung durchspielen", tag:"QA"},
@@ -139,12 +139,12 @@ const phases = [
   {
     label:"Marketing", badge:"badge-mktg", title:"Sichtbarkeit aufbauen",
     tasks:[
-      {title:"Instagram Account @wedly.de anlegen", sub:"Fokus: animierte Einladungs-Screenshots, Stil-Vergleiche, Testimonials", tag:"Social"},
+      {title:"Instagram Account @heartlace.com anlegen", sub:"Fokus: animierte Einladungs-Screenshots, Stil-Vergleiche, Testimonials", tag:"Social"},
       {title:"TikTok Account anlegen", sub:"'Einladung in 60 Sekunden' als Reels-Format — bester organischer Reach", tag:"Social"},
       {title:"Erstes Showcase-Video erstellen", sub:"Screen-Recording: Generator ausfüllen → fertige Einladung. Kein Schnitt nötig.", tag:"Content"},
       {title:"Pinterest-Profil anlegen", sub:"Hochzeitsplanung = riesiges Pinterest-Publikum. Screenshots pinnen.", tag:"Social"},
       {title:"5 erste Kunden ansprechen", sub:"Bekannte, Familie — kostenlos gegen ehrliches Feedback & Testimonial", tag:"Sales"},
-      {title:"Hochzeits-Facebook-Gruppen beitreten", sub:"Große DE-Gruppen: 'Hochzeitsplanung Deutschland' etc. — Wedly vorstellen", tag:"Social"},
+      {title:"Hochzeits-Facebook-Gruppen beitreten", sub:"Große DE-Gruppen: 'Hochzeitsplanung Deutschland' etc. — Heartlace vorstellen", tag:"Social"},
       {title:"Google Business Profil anlegen", sub:"Für lokale Auffindbarkeit und spätere Bewertungen", tag:"SEO"},
     ]
   },
@@ -153,7 +153,7 @@ const phases = [
     tasks:[
       {title:"Plausible.io Analytics einbauen", sub:"DSGVO-konformes Google Analytics Alternative — EU-Server, kostenlos bis 10k Besucher", tag:"Analytics"},
       {title:"Geburtstags-Einladungen als zweites Produkt", sub:"Gleicher Generator, anderer Prompt-Stil — schnell umsetzbar", tag:"Produkt"},
-      {title:"Affiliate-Programm für Hochzeitsplaner", sub:"Planer empfehlen Wedly → 15 % Provision pro Verkauf", tag:"Sales"},
+      {title:"Affiliate-Programm für Hochzeitsplaner", sub:"Planer empfehlen Heartlace → 15 % Provision pro Verkauf", tag:"Sales"},
       {title:"SEO-Blog starten", sub:"'Digitale Hochzeitseinladung Ideen 2025' — langfristiger Suchtrend", tag:"SEO"},
       {title:"Bewertungen auf Trustpilot sammeln", sub:"Nach jedem Kauf automatisch per E-Mail um Bewertung bitten", tag:"Trust"},
       {title:"Englischen Markt ausbauen", sub:"UK-Hochzeiten, andere Keywords, ggf. anderes Pricing in £", tag:"Wachstum"},
@@ -162,7 +162,7 @@ const phases = [
   }
 ];
 
-const STORAGE_KEY = 'wedly-todo-v1';
+const STORAGE_KEY = 'heartlace-todo-v1';
 let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
 let allCount = 0;
 

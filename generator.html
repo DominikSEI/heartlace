@@ -418,6 +418,16 @@
         <input type="text" id="rsvp-date" placeholder="z.B. 30. Mai 2025" value="30. Mai 2025"/>
       </div>
     </div>
+    <div class="form-row">
+      <div class="form-group full">
+        <label data-de="Dresscode" data-en="Dress code">Dresscode</label>
+        <input type="text" id="dresscode"
+               data-placeholder-de="z.B. Festlich, Gartenparty, Smart Casual"
+               data-placeholder-en="e.g. Black tie, Garden party, Smart casual"
+               placeholder="z.B. Festlich, Gartenparty, Smart Casual"
+               value="Festlich · Gartenparty-Stil willkommen"/>
+      </div>
+    </div>
   </div>
 
   <!-- Section 2: Eure Geschichte -->
@@ -436,10 +446,6 @@
     <div class="form-group full" style="margin-top:0.5rem">
       <label>Persönliche Nachricht an die Gäste</label>
       <textarea id="nachricht" rows="4" placeholder="Was möchtet ihr euren Gästen sagen?">Ohne euch wären wir nicht die, die wir heute sind. Kommt und feiert mit uns — es wird Musik geben, Tanz, viel zu gutes Essen und Momente, die wir alle nie vergessen werden.</textarea>
-    </div>
-    <div class="form-group" style="margin-top:1rem">
-      <label>Dresscode</label>
-      <input type="text" id="dresscode" placeholder="z.B. Festlich, Gartenparty-Stil willkommen" value="Festlich · Gartenparty-Stil willkommen"/>
     </div>
   </div>
 
@@ -540,9 +546,13 @@ function updateGenBtn() {
 // Language switch helper — call switchLang('en') / switchLang('de') from outside
 function switchLang(lang) {
   document.querySelectorAll('[data-de][data-en]').forEach(el => {
-    if (el.tagName === 'INPUT') return; // skip inputs
+    if (el.tagName === 'INPUT') return;
     const text = el.getAttribute('data-' + lang);
     if (text !== null) el.innerHTML = text;
+  });
+  // Switch placeholders
+  document.querySelectorAll('[data-placeholder-de][data-placeholder-en]').forEach(el => {
+    el.placeholder = el.getAttribute('data-placeholder-' + lang) || el.placeholder;
   });
 }
 
