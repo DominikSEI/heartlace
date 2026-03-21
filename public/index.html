@@ -170,8 +170,110 @@
       bottom: 24px;
       border-radius: 30px;
       overflow: hidden;
-      background: white;
+      background: #0f0d0a;
     }
+
+    /* ── Phone fallback ── */
+    .phone-fallback {
+      position: absolute;
+      inset: 0;
+      background: #0f0d0a;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      z-index: 1;
+    }
+
+    .phone-divider {
+      width: 28px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(184,149,90,0.5), transparent);
+      margin: 10px 0;
+      animation: fadeIn 1.4s ease forwards 0.6s;
+      opacity: 0;
+    }
+
+    .phone-fb-names {
+      font-family: 'Cormorant Infant', Georgia, serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.35rem;
+      color: #d4b07a;
+      text-align: center;
+      line-height: 1.3;
+      animation: fadeIn 1.4s ease forwards 0.4s;
+      opacity: 0;
+    }
+
+    .phone-fb-date {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 0.52rem;
+      letter-spacing: 0.28em;
+      color: rgba(184,149,90,0.55);
+      text-transform: uppercase;
+      animation: fadeIn 1.4s ease forwards 0.9s;
+      opacity: 0;
+    }
+
+    /* CSS Candle */
+    .candle-wrap {
+      position: relative;
+      margin-bottom: 16px;
+      animation: fadeIn 1.2s ease forwards 0.2s;
+      opacity: 0;
+    }
+    .candle-body {
+      width: 10px;
+      height: 32px;
+      background: linear-gradient(to bottom, #d4b07a 0%, #8a6030 100%);
+      border-radius: 2px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .candle-body::after { /* wax drip */
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: -2px;
+      width: 5px;
+      height: 8px;
+      background: #c09050;
+      border-radius: 0 0 4px 4px;
+    }
+    .candle-flame {
+      width: 10px;
+      height: 16px;
+      margin: 0 auto 2px;
+      background: radial-gradient(ellipse at 50% 75%,
+        #fff8e0 0%, #f5c842 35%, #e07820 65%, transparent 100%);
+      border-radius: 50% 50% 35% 35%;
+      animation: flicker 1.8s ease-in-out infinite;
+      position: relative;
+    }
+    .candle-glow {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 30px;
+      background: radial-gradient(circle, rgba(245,200,66,0.2) 0%, transparent 70%);
+      animation: glowPulse 1.8s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes flicker {
+      0%,100% { transform: scaleX(1) scaleY(1) translateX(0); opacity: 1; }
+      20%      { transform: scaleX(.85) scaleY(1.08) translateX(-1px); opacity: .95; }
+      50%      { transform: scaleX(1.1) scaleY(.94) translateX(1px); opacity: 1; }
+      75%      { transform: scaleX(.9) scaleY(1.06) translateX(-0.5px); opacity: .97; }
+    }
+    @keyframes glowPulse {
+      0%,100% { opacity: .6; transform: translateX(-50%) scale(1); }
+      50%      { opacity: 1;  transform: translateX(-50%) scale(1.3); }
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     /* Scale an iPhone-width page to fit the phone screen */
     /* Screen width: 250 - 5 - 5 = 240px. Scale = 240/390 ≈ 0.615 */
@@ -182,6 +284,10 @@
       transform: scale(0.615);
       transform-origin: top left;
       pointer-events: none;
+      position: relative;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.7s ease;
     }
 
     /* Gold corner accents */
@@ -348,7 +454,20 @@
   <div class="phone-wrap">
     <div class="phone">
       <div class="phone-screen">
-        <iframe src="hochzeit-demo.html" title="Demo invitation" scrolling="no"></iframe>
+        <!-- Elegant fallback (visible when iframe hasn't loaded) -->
+        <div class="phone-fallback">
+          <div class="candle-wrap">
+            <div class="candle-glow"></div>
+            <div class="candle-flame"></div>
+            <div class="candle-body"></div>
+          </div>
+          <p class="phone-fb-names">Sophia<br>&amp; Maximilian</p>
+          <div class="phone-divider"></div>
+          <p class="phone-fb-date">12. Juli 2025</p>
+        </div>
+        <!-- iframe fades in on load, covering the fallback -->
+        <iframe src="hochzeit-demo.html" title="Demo invitation" scrolling="no"
+                onload="this.style.opacity='1'"></iframe>
       </div>
     </div>
     <div class="phone-accent tl"></div>
