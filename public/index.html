@@ -177,7 +177,7 @@
     .phone-screen-inner {
       position: absolute;
       inset: 0;
-      background: #0f0d0a;
+      background: #f7f2ea;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -191,8 +191,8 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 20px;
-      background: rgba(184,149,90,0.06);
-      border-bottom: 1px solid rgba(184,149,90,0.12);
+      background: rgba(184,149,90,0.08);
+      border-bottom: 1px solid rgba(184,149,90,0.18);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -202,7 +202,7 @@
     .ps-statusbar span {
       font-family: monospace;
       font-size: 0.45rem;
-      color: rgba(184,149,90,0.35);
+      color: rgba(184,149,90,0.55);
       letter-spacing: 0.05em;
     }
 
@@ -261,7 +261,7 @@
       font-family: 'Cinzel', Georgia, serif;
       font-size: 0.42rem;
       letter-spacing: 0.38em;
-      color: rgba(184,149,90,0.5);
+      color: #b8955a;
       text-transform: uppercase;
       margin-bottom: 6px;
       opacity: 0;
@@ -272,7 +272,7 @@
       font-style: italic;
       font-weight: 300;
       font-size: 1.25rem;
-      color: #d4b07a;
+      color: #0f0d0a;
       text-align: center;
       line-height: 1.25;
       opacity: 0;
@@ -282,7 +282,7 @@
     /* Divider */
     .ps-divider {
       width: 40px; height: 1px;
-      background: linear-gradient(to right, transparent, rgba(184,149,90,0.45), transparent);
+      background: linear-gradient(to right, transparent, #b8955a, transparent);
       margin: 10px 0;
       opacity: 0;
       animation: psIn 1s ease forwards 0.9s;
@@ -293,7 +293,7 @@
       font-family: 'Cinzel', Georgia, serif;
       font-size: 0.48rem;
       letter-spacing: 0.25em;
-      color: rgba(184,149,90,0.75);
+      color: #b8955a;
       text-transform: uppercase;
       margin-bottom: 4px;
       opacity: 0;
@@ -303,7 +303,7 @@
       font-family: 'Cormorant Infant', Georgia, serif;
       font-style: italic;
       font-size: 0.62rem;
-      color: rgba(184,149,90,0.45);
+      color: rgba(15,13,10,0.45);
       opacity: 0;
       animation: psIn 1s ease forwards 1.2s;
     }
@@ -319,14 +319,14 @@
     .ps-dot {
       width: 4px; height: 4px;
       border-radius: 50%;
-      background: rgba(184,149,90,0.4);
+      background: rgba(184,149,90,0.35);
     }
     .ps-dot:nth-child(1) { animation: psDot 2s ease-in-out infinite 0s; }
     .ps-dot:nth-child(2) { animation: psDot 2s ease-in-out infinite 0.35s; }
     .ps-dot:nth-child(3) { animation: psDot 2s ease-in-out infinite 0.7s; }
     @keyframes psDot {
       0%,100% { background: rgba(184,149,90,0.25); transform: scale(1); }
-      50%      { background: rgba(184,149,90,0.85); transform: scale(1.4); }
+      50%      { background: #b8955a; transform: scale(1.4); }
     }
 
     @keyframes psIn {
@@ -545,19 +545,6 @@
   </div>
 </section>
 
-<!-- ── PREVIEW ── -->
-<section id="preview">
-  <p class="section-eyebrow fade-in" data-en="Live Demo" data-de="Live Demo">Live Demo</p>
-  <h2 class="section-title fade-in" data-en="This is what your guests will see" data-de="So sehen es eure Gäste">This is what your guests will see</h2>
-  <p class="section-body fade-in" data-en="Every invitation is uniquely generated based on your story, your style, and your colours. No two are ever the same." data-de="Jede Einladung wird individuell auf Basis eurer Geschichte, eurem Stil und euren Farben generiert. Keine zwei sind jemals gleich.">Every invitation is uniquely generated based on your story, your style, and your colours.</p>
-  <div class="preview-frame-wrap fade-in">
-    <div class="preview-bar">
-      <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
-      <span class="preview-url">heartlace.com/sophia-und-maximilian</span>
-    </div>
-    <iframe class="preview-iframe" src="hochzeit-demo.html" title="Demo invitation"></iframe>
-  </div>
-</section>
 
 <!-- ── HOW IT WORKS ── -->
 <section id="how">
