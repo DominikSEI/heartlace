@@ -173,8 +173,8 @@
       background: #0f0d0a;
     }
 
-    /* ── Phone fallback ── */
-    .phone-fallback {
+    /* ── Phone screen content ── */
+    .phone-screen-inner {
       position: absolute;
       inset: 0;
       background: #0f0d0a;
@@ -182,112 +182,156 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0;
-      z-index: 1;
+      padding: 20px 16px;
+      overflow: hidden;
     }
 
-    .phone-divider {
-      width: 28px;
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(184,149,90,0.5), transparent);
-      margin: 10px 0;
-      animation: fadeIn 1.4s ease forwards 0.6s;
+    /* Subtle top bar mimicking a browser/status bar */
+    .ps-statusbar {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 20px;
+      background: rgba(184,149,90,0.06);
+      border-bottom: 1px solid rgba(184,149,90,0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       opacity: 0;
+      animation: psIn 0.8s ease forwards 0.1s;
+    }
+    .ps-statusbar span {
+      font-family: monospace;
+      font-size: 0.45rem;
+      color: rgba(184,149,90,0.35);
+      letter-spacing: 0.05em;
     }
 
-    .phone-fb-names {
-      font-family: 'Cormorant Infant', Georgia, serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 1.35rem;
-      color: #d4b07a;
-      text-align: center;
-      line-height: 1.3;
-      animation: fadeIn 1.4s ease forwards 0.4s;
-      opacity: 0;
-    }
-
-    .phone-fb-date {
-      font-family: 'Cinzel', Georgia, serif;
-      font-size: 0.52rem;
-      letter-spacing: 0.28em;
-      color: rgba(184,149,90,0.55);
-      text-transform: uppercase;
-      animation: fadeIn 1.4s ease forwards 0.9s;
-      opacity: 0;
-    }
-
-    /* CSS Candle */
-    .candle-wrap {
+    /* Candle */
+    .ps-candle {
       position: relative;
-      margin-bottom: 16px;
-      animation: fadeIn 1.2s ease forwards 0.2s;
+      margin-bottom: 14px;
       opacity: 0;
+      animation: psIn 1s ease forwards 0.3s;
     }
-    .candle-body {
-      width: 10px;
-      height: 32px;
-      background: linear-gradient(to bottom, #d4b07a 0%, #8a6030 100%);
+    .ps-glow {
+      position: absolute;
+      top: -10px; left: 50%;
+      transform: translateX(-50%);
+      width: 36px; height: 36px;
+      background: radial-gradient(circle, rgba(245,200,66,0.18) 0%, transparent 70%);
+      animation: psGlow 2s ease-in-out infinite;
+    }
+    .ps-flame {
+      width: 9px; height: 14px;
+      margin: 0 auto 1px;
+      background: radial-gradient(ellipse at 50% 75%,
+        #fffbe8 0%, #f7d040 30%, #e67818 62%, transparent 100%);
+      border-radius: 50% 50% 34% 34%;
+      animation: psFlicker 1.9s ease-in-out infinite;
+    }
+    .ps-body {
+      width: 8px; height: 28px;
+      background: linear-gradient(to bottom, #d4b07a, #7a5228);
       border-radius: 2px;
       margin: 0 auto;
       position: relative;
     }
-    .candle-body::after { /* wax drip */
+    .ps-body::after {
       content: '';
       position: absolute;
-      top: 4px;
-      left: -2px;
-      width: 5px;
-      height: 8px;
-      background: #c09050;
-      border-radius: 0 0 4px 4px;
+      top: 3px; left: -2px;
+      width: 4px; height: 7px;
+      background: #b88040;
+      border-radius: 0 0 3px 3px;
     }
-    .candle-flame {
-      width: 10px;
-      height: 16px;
-      margin: 0 auto 2px;
-      background: radial-gradient(ellipse at 50% 75%,
-        #fff8e0 0%, #f5c842 35%, #e07820 65%, transparent 100%);
-      border-radius: 50% 50% 35% 35%;
-      animation: flicker 1.8s ease-in-out infinite;
-      position: relative;
-    }
-    .candle-glow {
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 30px;
-      height: 30px;
-      background: radial-gradient(circle, rgba(245,200,66,0.2) 0%, transparent 70%);
-      animation: glowPulse 1.8s ease-in-out infinite;
-      pointer-events: none;
-    }
-    @keyframes flicker {
-      0%,100% { transform: scaleX(1) scaleY(1) translateX(0); opacity: 1; }
-      20%      { transform: scaleX(.85) scaleY(1.08) translateX(-1px); opacity: .95; }
-      50%      { transform: scaleX(1.1) scaleY(.94) translateX(1px); opacity: 1; }
-      75%      { transform: scaleX(.9) scaleY(1.06) translateX(-0.5px); opacity: .97; }
-    }
-    @keyframes glowPulse {
-      0%,100% { opacity: .6; transform: translateX(-50%) scale(1); }
-      50%      { opacity: 1;  transform: translateX(-50%) scale(1.3); }
-    }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* Scale an iPhone-width page to fit the phone screen */
-    /* Screen width: 250 - 5 - 5 = 240px. Scale = 240/390 ≈ 0.615 */
-    .phone-screen iframe {
-      width: 390px;
-      height: 750px;
-      border: none;
-      transform: scale(0.615);
-      transform-origin: top left;
-      pointer-events: none;
-      position: relative;
-      z-index: 2;
+    @keyframes psFlicker {
+      0%,100% { transform: scaleX(1)   scaleY(1)    translateX(0);    opacity: 1; }
+      22%      { transform: scaleX(.82) scaleY(1.1)  translateX(-1px); opacity:.93; }
+      55%      { transform: scaleX(1.1) scaleY(.92)  translateX(1px);  opacity: 1; }
+      78%      { transform: scaleX(.9)  scaleY(1.07) translateX(-.5px);opacity:.96; }
+    }
+    @keyframes psGlow {
+      0%,100% { opacity:.5; transform:translateX(-50%) scale(1); }
+      50%      { opacity:1;  transform:translateX(-50%) scale(1.35); }
+    }
+
+    /* Names */
+    .ps-eyebrow {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 0.42rem;
+      letter-spacing: 0.38em;
+      color: rgba(184,149,90,0.5);
+      text-transform: uppercase;
+      margin-bottom: 6px;
       opacity: 0;
-      transition: opacity 0.7s ease;
+      animation: psIn 1s ease forwards 0.55s;
+    }
+    .ps-names {
+      font-family: 'Cormorant Infant', Georgia, serif;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 1.25rem;
+      color: #d4b07a;
+      text-align: center;
+      line-height: 1.25;
+      opacity: 0;
+      animation: psIn 1s ease forwards 0.7s;
+    }
+
+    /* Divider */
+    .ps-divider {
+      width: 40px; height: 1px;
+      background: linear-gradient(to right, transparent, rgba(184,149,90,0.45), transparent);
+      margin: 10px 0;
+      opacity: 0;
+      animation: psIn 1s ease forwards 0.9s;
+    }
+
+    /* Date & location */
+    .ps-date {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 0.48rem;
+      letter-spacing: 0.25em;
+      color: rgba(184,149,90,0.75);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      opacity: 0;
+      animation: psIn 1s ease forwards 1.05s;
+    }
+    .ps-location {
+      font-family: 'Cormorant Infant', Georgia, serif;
+      font-style: italic;
+      font-size: 0.62rem;
+      color: rgba(184,149,90,0.45);
+      opacity: 0;
+      animation: psIn 1s ease forwards 1.2s;
+    }
+
+    /* Pulsing dots */
+    .ps-dots {
+      display: flex;
+      gap: 5px;
+      margin-top: 18px;
+      opacity: 0;
+      animation: psIn 1s ease forwards 1.4s;
+    }
+    .ps-dot {
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: rgba(184,149,90,0.4);
+    }
+    .ps-dot:nth-child(1) { animation: psDot 2s ease-in-out infinite 0s; }
+    .ps-dot:nth-child(2) { animation: psDot 2s ease-in-out infinite 0.35s; }
+    .ps-dot:nth-child(3) { animation: psDot 2s ease-in-out infinite 0.7s; }
+    @keyframes psDot {
+      0%,100% { background: rgba(184,149,90,0.25); transform: scale(1); }
+      50%      { background: rgba(184,149,90,0.85); transform: scale(1.4); }
+    }
+
+    @keyframes psIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* Gold corner accents */
@@ -454,20 +498,39 @@
   <div class="phone-wrap">
     <div class="phone">
       <div class="phone-screen">
-        <!-- Elegant fallback (visible when iframe hasn't loaded) -->
-        <div class="phone-fallback">
-          <div class="candle-wrap">
-            <div class="candle-glow"></div>
-            <div class="candle-flame"></div>
-            <div class="candle-body"></div>
+        <div class="phone-screen-inner">
+          <!-- Status bar -->
+          <div class="ps-statusbar"><span>heartlace.com/sophia-maximilian</span></div>
+
+          <!-- Candle -->
+          <div class="ps-candle">
+            <div class="ps-glow"></div>
+            <div class="ps-flame"></div>
+            <div class="ps-body"></div>
           </div>
-          <p class="phone-fb-names">Sophia<br>&amp; Maximilian</p>
-          <div class="phone-divider"></div>
-          <p class="phone-fb-date">12. Juli 2025</p>
+
+          <!-- Eyebrow -->
+          <p class="ps-eyebrow">Wir heiraten</p>
+
+          <!-- Names -->
+          <p class="ps-names">Sophia<br>&amp; Maximilian</p>
+
+          <!-- Divider -->
+          <div class="ps-divider"></div>
+
+          <!-- Date -->
+          <p class="ps-date">12. Juli 2025</p>
+
+          <!-- Location -->
+          <p class="ps-location">Schloss Elmau · Bayern</p>
+
+          <!-- Pulsing dots -->
+          <div class="ps-dots">
+            <div class="ps-dot"></div>
+            <div class="ps-dot"></div>
+            <div class="ps-dot"></div>
+          </div>
         </div>
-        <!-- iframe fades in on load, covering the fallback -->
-        <iframe src="hochzeit-demo.html" title="Demo invitation" scrolling="no"
-                onload="this.style.opacity='1'"></iframe>
       </div>
     </div>
     <div class="phone-accent tl"></div>
