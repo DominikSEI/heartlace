@@ -83,11 +83,48 @@
       border-radius: 30px; overflow: hidden;
       background: #fdf0f0;
     }
-    .lp-inner {
+    /* Multi-panel system */
+    .lp-panels {
+      position: absolute; inset: 18px 0 0 0;
+      overflow: hidden;
+    }
+    .lp-panel {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      padding: 22px 14px 14px;
+      padding: 10px 14px 14px;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      pointer-events: none;
+    }
+    .lp-panel.active {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .lp-section-label {
+      font-family: 'Cinzel', serif; font-size: 0.34rem;
+      letter-spacing: 0.28em; color: rgba(184,151,90,0.65);
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+    .lp-letter {
+      font-family: 'Cormorant Infant', serif; font-style: italic;
+      font-size: 0.6rem; color: rgba(61,32,32,0.6);
+      text-align: center; line-height: 1.65;
+      display: -webkit-box; -webkit-line-clamp: 9; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .lp-letter.empty { color: rgba(61,32,32,0.28); }
+    .lp-style-preview {
+      width: 74px; height: 74px; border-radius: 50%;
+      box-shadow: 0 4px 18px rgba(61,32,32,0.16);
+      transition: background 0.45s ease;
+    }
+    .lp-style-name {
+      font-family: 'Cormorant Infant', serif; font-style: italic;
+      font-size: 0.7rem; color: rgba(61,32,32,0.6);
+      text-align: center; margin-top: 3px;
     }
     .lp-statusbar {
       position: absolute; top: 0; left: 0; right: 0; height: 18px;
@@ -674,22 +711,43 @@
 
   <!-- ── RIGHT: Sticky live-preview sidebar ── -->
   <div class="gen-sidebar">
-    <span class="gen-live-label">Live-Vorschau</span>
+    <span class="gen-live-label" id="gen-live-label">01 · Brautpaar</span>
     <div class="lp-phone">
       <div class="lp-screen">
-        <div class="lp-inner">
-          <div class="lp-statusbar"><span>heartlace.com/eure-einladung</span></div>
-          <p class="lp-logo">heartlace.</p>
-          <p class="lp-eyebrow">Wir heiraten</p>
-          <p class="lp-names empty" id="lp-names">Eure Namen erscheinen hier…</p>
-          <div class="lp-divider"></div>
-          <p class="lp-date" id="lp-date"></p>
-          <p class="lp-location" id="lp-location"></p>
-          <p class="lp-dresscode" id="lp-dresscode"></p>
+        <div class="lp-statusbar"><span>heartlace.com/eure-einladung</span></div>
+        <div class="lp-panels">
+
+          <!-- Panel 1: Hero (Section 01 – Brautpaar) -->
+          <div class="lp-panel active" id="lp-panel-1">
+            <p class="lp-logo">heartlace.</p>
+            <p class="lp-eyebrow">Wir heiraten</p>
+            <p class="lp-names empty" id="lp-names">Eure Namen erscheinen hier…</p>
+            <div class="lp-divider"></div>
+            <p class="lp-date" id="lp-date"></p>
+            <p class="lp-location" id="lp-location"></p>
+            <p class="lp-dresscode" id="lp-dresscode"></p>
+          </div>
+
+          <!-- Panel 2: Letter (Section 02 – Geschichte) -->
+          <div class="lp-panel" id="lp-panel-2">
+            <p class="lp-section-label">An unsere Gäste</p>
+            <div class="lp-divider"></div>
+            <p class="lp-letter empty" id="lp-letter">Eure persönliche Nachricht erscheint hier…</p>
+          </div>
+
+          <!-- Panel 3: Style (Section 03 – Stil) -->
+          <div class="lp-panel" id="lp-panel-3">
+            <div class="lp-style-preview" id="lp-style-preview" style="background:linear-gradient(135deg,#c4836a,#b8975a)"></div>
+            <p class="lp-section-label" style="margin-top:10px">Stil & Farbe</p>
+            <p class="lp-style-name" id="lp-style-name">Romantisch elegant</p>
+            <div class="lp-divider" style="margin:7px 0"></div>
+            <p class="lp-names" id="lp-names-style" style="font-size:0.72rem; opacity:0.6"></p>
+          </div>
+
         </div>
       </div>
     </div>
-    <p class="lp-hint">Tippt in die Felder links —<br>die Vorschau aktualisiert sich sofort.</p>
+    <p class="lp-hint" id="lp-hint">Tippt in die Felder —<br>die Vorschau aktualisiert sich sofort.</p>
   </div>
 
   </div><!-- /gen-layout -->
@@ -739,6 +797,25 @@ let generatedHTML  = '';
 let photoBase64    = null;
 let photoMimeType  = null;
 
+const colorMap = {
+  'rose-gold':      { primary:'#c4836a', secondary:'#b8975a', bg:'#f5f0e8', accent:'#e8b49a' },
+  'sage-blush':     { primary:'#8a9e82', secondary:'#5c7055', bg:'#f4f8f2', accent:'#f0ddd4' },
+  'navy-gold':      { primary:'#2c3e50', secondary:'#d4b87a', bg:'#f0f2f5', accent:'#b8975a' },
+  'creme-lavendel': { primary:'#9b6fc0', secondary:'#7b52a0', bg:'#faf6ff', accent:'#c9a0dc' },
+  'schwarz-gold':   { primary:'#b8975a', secondary:'#d4b87a', bg:'#0d0b08', accent:'#f5f0e8' },
+  'mint-smaragd':   { primary:'#3a7d6e', secondary:'#2d6258', bg:'#f0f9f7', accent:'#9eccc3' },
+  'rosa-rot':       { primary:'#e8436f', secondary:'#c42050', bg:'#fff5f7', accent:'#f9c0d0' },
+  'creme-sage':     { primary:'#5c7055', secondary:'#3d4f39', bg:'#f8f5ee', accent:'#8a9e82' },
+};
+const styleLabels = {
+  'romantisch-elegant': 'Romantisch elegant',
+  'boho-natur': 'Boho & Natur',
+  'modern-minimalistisch': 'Modern minimal',
+  'vintage-nostalgisch': 'Vintage nostalgisch',
+  'tropisch-bunt': 'Tropisch bunt',
+  'luxus-glamouroes': 'Luxus glamourös',
+};
+
 // ── Photo upload ──────────────────────────────────────────────────
 function handlePhotoFile(file) {
   if (!file) return;
@@ -777,7 +854,9 @@ function updateLivePreview() {
   const datum = document.getElementById('datum').value.trim();
   const loc   = document.getElementById('location').value.trim();
   const dc    = document.getElementById('dresscode').value.trim();
+  const nachricht = document.getElementById('nachricht').value.trim();
 
+  // Panel 1: hero
   const namesEl = document.getElementById('lp-names');
   if (name1 || name2) {
     namesEl.textContent = `${name1 || '…'} & ${name2 || '…'}`;
@@ -786,14 +865,71 @@ function updateLivePreview() {
     namesEl.textContent = 'Eure Namen erscheinen hier…';
     namesEl.classList.add('empty');
   }
-  document.getElementById('lp-date').textContent     = datum;
-  document.getElementById('lp-location').textContent = loc;
+  document.getElementById('lp-date').textContent      = datum;
+  document.getElementById('lp-location').textContent  = loc;
   document.getElementById('lp-dresscode').textContent = dc ? `Dresscode · ${dc}` : '';
+
+  // Panel 2: letter
+  const letterEl = document.getElementById('lp-letter');
+  if (letterEl) {
+    letterEl.textContent = nachricht || 'Eure persönliche Nachricht erscheint hier…';
+    letterEl.classList.toggle('empty', !nachricht);
+  }
+
+  // Panel 3: names mirror
+  const namesStyle = document.getElementById('lp-names-style');
+  if (namesStyle) namesStyle.textContent = (name1 || name2) ? `${name1 || '…'} & ${name2 || '…'}` : '';
 }
-['name1','name2','datum','location','dresscode'].forEach(id => {
+['name1','name2','datum','location','dresscode','nachricht'].forEach(id => {
   document.getElementById(id)?.addEventListener('input', updateLivePreview);
 });
 updateLivePreview();
+
+// ── Panel switching ───────────────────────────────────────────────
+let activePanel = 1;
+const panelLabels = ['01 · Brautpaar', '02 · Geschichte', '03 · Stil'];
+
+function setPanel(n) {
+  if (n === activePanel) return;
+  activePanel = n;
+  document.querySelectorAll('.lp-panel').forEach((p, i) => {
+    p.classList.toggle('active', i + 1 === n);
+  });
+  const labelEl = document.getElementById('gen-live-label');
+  if (labelEl) labelEl.textContent = panelLabels[n - 1] || 'Live-Vorschau';
+  const hintEl = document.getElementById('lp-hint');
+  if (hintEl) {
+    const hints = [
+      'Tippt in die Felder —\ndie Vorschau aktualisiert sich sofort.',
+      'Eure Nachricht erscheint\nhier in Echtzeit.',
+      'Wählt Stil & Farbe —\ndie Vorschau passt sich an.',
+    ];
+    hintEl.innerHTML = hints[n - 1].replace('\n', '<br>');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const formSections = document.querySelectorAll('.form-section');
+  const sectionObs = new IntersectionObserver(entries => {
+    let best = null, bestRatio = 0;
+    entries.forEach(e => {
+      if (e.intersectionRatio > bestRatio) { bestRatio = e.intersectionRatio; best = e.target; }
+    });
+    if (best) {
+      const idx = Array.from(formSections).indexOf(best);
+      setPanel(Math.min(idx + 1, 3));
+    }
+  }, { threshold: [0.3, 0.5, 0.7] });
+  formSections.forEach(s => sectionObs.observe(s));
+});
+
+function updateStylePanel() {
+  const colors = colorMap[selectedColor] || colorMap['rose-gold'];
+  const preview = document.getElementById('lp-style-preview');
+  if (preview) preview.style.background = `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`;
+  const nameEl = document.getElementById('lp-style-name');
+  if (nameEl) nameEl.textContent = styleLabels[selectedStyle] || selectedStyle;
+}
 
 // ── UI helpers ────────────────────────────────────────────────────
 function updateGenBtn() {
@@ -816,10 +952,12 @@ function switchLang(lang) {
 function selectStyle(el, val) {
   document.querySelectorAll('.style-pill').forEach(p => p.classList.remove('selected'));
   el.classList.add('selected'); selectedStyle = val;
+  updateStylePanel();
 }
 function selectColor(el, val) {
   document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
   el.classList.add('selected'); selectedColor = val;
+  updateStylePanel();
 }
 
 // ── Progress inside phone ─────────────────────────────────────────
@@ -884,16 +1022,6 @@ async function generateInvitation() {
   showPhone();
   setProgress(1, 'Stil wird<br>festgelegt…');
 
-  const colorMap = {
-    'rose-gold':      { primary:'#c4836a', secondary:'#b8975a', bg:'#f5f0e8', accent:'#e8b49a' },
-    'sage-blush':     { primary:'#8a9e82', secondary:'#5c7055', bg:'#f4f8f2', accent:'#f0ddd4' },
-    'navy-gold':      { primary:'#2c3e50', secondary:'#d4b87a', bg:'#f0f2f5', accent:'#b8975a' },
-    'creme-lavendel': { primary:'#9b6fc0', secondary:'#7b52a0', bg:'#faf6ff', accent:'#c9a0dc' },
-    'schwarz-gold':   { primary:'#b8975a', secondary:'#d4b87a', bg:'#0d0b08', accent:'#f5f0e8' },
-    'mint-smaragd':   { primary:'#3a7d6e', secondary:'#2d6258', bg:'#f0f9f7', accent:'#9eccc3' },
-    'rosa-rot':       { primary:'#e8436f', secondary:'#c42050', bg:'#fff5f7', accent:'#f9c0d0' },
-    'creme-sage':     { primary:'#5c7055', secondary:'#3d4f39', bg:'#f8f5ee', accent:'#8a9e82' },
-  };
   const colors = colorMap[selectedColor] || colorMap['rose-gold'];
 
   const stilMap = {
