@@ -173,165 +173,169 @@
       background: #3d2020;
     }
 
-    /* ── Phone screen content ── */
+    /* ── Phone screen: slideshow ── */
     .phone-screen-inner {
       position: absolute;
       inset: 0;
       background: #fdf0f0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px 16px;
       overflow: hidden;
     }
 
-    /* Subtle top bar mimicking a browser/status bar */
+    /* Status bar */
     .ps-statusbar {
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0; left: 0; right: 0; z-index: 10;
       height: 20px;
-      background: rgba(184,149,90,0.08);
+      background: rgba(253,240,240,0.92);
       border-bottom: 1px solid rgba(184,149,90,0.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      animation: psIn 0.8s ease forwards 0.1s;
+      display: flex; align-items: center; justify-content: center;
     }
     .ps-statusbar span {
-      font-family: monospace;
-      font-size: 0.45rem;
-      color: rgba(184,149,90,0.55);
-      letter-spacing: 0.05em;
+      font-family: monospace; font-size: 0.42rem;
+      color: rgba(184,149,90,0.6); letter-spacing: 0.05em;
     }
 
-    /* Candle */
-    .ps-candle {
-      position: relative;
-      margin-bottom: 14px;
-      opacity: 0;
-      animation: psIn 1s ease forwards 0.3s;
+    /* Slide navigation dots */
+    .ps-nav {
+      position: absolute; bottom: 10px; left: 0; right: 0; z-index: 10;
+      display: flex; justify-content: center; gap: 5px;
     }
-    .ps-glow {
+    .ps-nav-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: rgba(184,149,90,0.25);
+    }
+    .ps-nav-dot:nth-child(1) { animation: navDot 9s ease-in-out infinite 0s; }
+    .ps-nav-dot:nth-child(2) { animation: navDot 9s ease-in-out infinite 3s; }
+    .ps-nav-dot:nth-child(3) { animation: navDot 9s ease-in-out infinite 6s; }
+    @keyframes navDot {
+      0%,4%     { background: #b8955a; transform: scale(1.5); }
+      34%,100%  { background: rgba(184,149,90,0.25); transform: scale(1); }
+    }
+
+    /* Slide base */
+    .ps-slide {
       position: absolute;
-      top: -10px; left: 50%;
-      transform: translateX(-50%);
-      width: 36px; height: 36px;
-      background: radial-gradient(circle, rgba(245,200,66,0.18) 0%, transparent 70%);
+      inset: 20px 0 20px 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 14px 16px;
+      opacity: 0;
+      animation: slideShow 9s ease-in-out infinite;
+    }
+    .ps-slide-1 { animation-delay: 0s; }
+    .ps-slide-2 { animation-delay: 3s; }
+    .ps-slide-3 { animation-delay: 6s; }
+    @keyframes slideShow {
+      0%    { opacity: 0; }
+      6%    { opacity: 1; }
+      27%   { opacity: 1; }
+      33%   { opacity: 0; }
+      100%  { opacity: 0; }
+    }
+
+    /* ── Slide 1: Hero ── */
+    .ps-candle { position: relative; margin-bottom: 12px; }
+    .ps-glow {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      width: 34px; height: 34px;
+      background: radial-gradient(circle, rgba(245,200,66,0.2) 0%, transparent 70%);
       animation: psGlow 2s ease-in-out infinite;
     }
     .ps-flame {
-      width: 9px; height: 14px;
-      margin: 0 auto 1px;
-      background: radial-gradient(ellipse at 50% 75%,
-        #fffbe8 0%, #f7d040 30%, #e67818 62%, transparent 100%);
+      width: 9px; height: 14px; margin: 0 auto 1px;
+      background: radial-gradient(ellipse at 50% 75%, #fffbe8 0%, #f7d040 30%, #e67818 62%, transparent 100%);
       border-radius: 50% 50% 34% 34%;
       animation: psFlicker 1.9s ease-in-out infinite;
     }
     .ps-body {
-      width: 8px; height: 28px;
-      background: linear-gradient(to bottom, #d4b07a, #7a5228);
-      border-radius: 2px;
-      margin: 0 auto;
-      position: relative;
+      width: 8px; height: 26px;
+      background: linear-gradient(to bottom, #e8c0b0, #c4736a);
+      border-radius: 2px; margin: 0 auto;
     }
-    .ps-body::after {
-      content: '';
-      position: absolute;
-      top: 3px; left: -2px;
-      width: 4px; height: 7px;
-      background: #b88040;
-      border-radius: 0 0 3px 3px;
-    }
-
     @keyframes psFlicker {
-      0%,100% { transform: scaleX(1)   scaleY(1)    translateX(0);    opacity: 1; }
-      22%      { transform: scaleX(.82) scaleY(1.1)  translateX(-1px); opacity:.93; }
-      55%      { transform: scaleX(1.1) scaleY(.92)  translateX(1px);  opacity: 1; }
-      78%      { transform: scaleX(.9)  scaleY(1.07) translateX(-.5px);opacity:.96; }
+      0%,100% { transform: scaleX(1) scaleY(1); opacity: 1; }
+      22%      { transform: scaleX(.82) scaleY(1.1) translateX(-1px); opacity:.93; }
+      55%      { transform: scaleX(1.1) scaleY(.92) translateX(1px);  opacity: 1; }
+      78%      { transform: scaleX(.9) scaleY(1.07); opacity:.96; }
     }
     @keyframes psGlow {
       0%,100% { opacity:.5; transform:translateX(-50%) scale(1); }
-      50%      { opacity:1;  transform:translateX(-50%) scale(1.35); }
+      50%      { opacity:1;  transform:translateX(-50%) scale(1.38); }
     }
-
-    /* Names */
     .ps-eyebrow {
-      font-family: 'Cinzel', Georgia, serif;
-      font-size: 0.42rem;
-      letter-spacing: 0.38em;
-      color: #b8955a;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      opacity: 0;
-      animation: psIn 1s ease forwards 0.55s;
+      font-family: 'Cinzel', Georgia, serif; font-size: 0.4rem;
+      letter-spacing: 0.38em; color: #b8955a; text-transform: uppercase; margin-bottom: 5px;
     }
     .ps-names {
-      font-family: 'Cormorant Infant', Georgia, serif;
-      font-style: italic;
-      font-weight: 300;
-      font-size: 1.25rem;
-      color: #3d2020;
-      text-align: center;
-      line-height: 1.25;
-      opacity: 0;
-      animation: psIn 1s ease forwards 0.7s;
+      font-family: 'Cormorant Infant', Georgia, serif; font-style: italic;
+      font-weight: 300; font-size: 1.2rem; color: #3d2020;
+      text-align: center; line-height: 1.2;
     }
-
-    /* Divider */
     .ps-divider {
-      width: 40px; height: 1px;
+      width: 36px; height: 1px;
       background: linear-gradient(to right, transparent, #b8955a, transparent);
-      margin: 10px 0;
-      opacity: 0;
-      animation: psIn 1s ease forwards 0.9s;
+      margin: 9px 0;
     }
-
-    /* Date & location */
     .ps-date {
-      font-family: 'Cinzel', Georgia, serif;
-      font-size: 0.48rem;
-      letter-spacing: 0.25em;
-      color: #b8955a;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-      opacity: 0;
-      animation: psIn 1s ease forwards 1.05s;
+      font-family: 'Cinzel', Georgia, serif; font-size: 0.44rem;
+      letter-spacing: 0.22em; color: #b8955a; text-transform: uppercase; margin-bottom: 3px;
     }
     .ps-location {
-      font-family: 'Cormorant Infant', Georgia, serif;
-      font-style: italic;
-      font-size: 0.62rem;
-      color: rgba(61,32,32,0.5);
-      opacity: 0;
-      animation: psIn 1s ease forwards 1.2s;
+      font-family: 'Cormorant Infant', Georgia, serif; font-style: italic;
+      font-size: 0.6rem; color: rgba(61,32,32,0.5);
     }
 
-    /* Pulsing dots */
-    .ps-dots {
-      display: flex;
-      gap: 5px;
-      margin-top: 18px;
-      opacity: 0;
-      animation: psIn 1s ease forwards 1.4s;
+    /* ── Slide 2: Details ── */
+    .ps-details-title {
+      font-family: 'Cinzel', Georgia, serif; font-size: 0.42rem;
+      letter-spacing: 0.32em; color: #b8955a; text-transform: uppercase; margin-bottom: 12px;
     }
-    .ps-dot {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: rgba(184,149,90,0.35);
+    .ps-detail-card {
+      width: 100%; background: white;
+      border: 1px solid rgba(184,149,90,0.2); border-radius: 2px;
+      padding: 6px 10px; margin-bottom: 5px;
+      display: flex; align-items: center; gap: 7px;
     }
-    .ps-dot:nth-child(1) { animation: psDot 2s ease-in-out infinite 0s; }
-    .ps-dot:nth-child(2) { animation: psDot 2s ease-in-out infinite 0.35s; }
-    .ps-dot:nth-child(3) { animation: psDot 2s ease-in-out infinite 0.7s; }
-    @keyframes psDot {
-      0%,100% { background: rgba(184,149,90,0.25); transform: scale(1); }
-      50%      { background: #b8955a; transform: scale(1.4); }
+    .ps-detail-icon { font-size: 0.65rem; }
+    .ps-detail-info { display: flex; flex-direction: column; gap: 1px; }
+    .ps-detail-label {
+      font-family: 'Cinzel', Georgia, serif; font-size: 0.34rem;
+      letter-spacing: 0.2em; color: rgba(61,32,32,0.4); text-transform: uppercase;
+    }
+    .ps-detail-value {
+      font-family: 'Cormorant Infant', Georgia, serif; font-size: 0.62rem;
+      color: #3d2020; font-style: italic;
     }
 
-    @keyframes psIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* ── Slide 3: RSVP ── */
+    .ps-rsvp-title {
+      font-family: 'Cormorant Infant', Georgia, serif; font-style: italic;
+      font-size: 0.9rem; color: #3d2020; text-align: center;
+      line-height: 1.3; margin-bottom: 12px;
+    }
+    .ps-rsvp-sub {
+      font-family: 'Cinzel', Georgia, serif; font-size: 0.38rem;
+      letter-spacing: 0.25em; color: #b8955a; text-transform: uppercase; margin-bottom: 14px;
+    }
+    .ps-rsvp-field {
+      width: 100%; background: rgba(253,240,240,0.8);
+      border: 1px solid rgba(184,149,90,0.25); border-radius: 1px;
+      padding: 5px 8px; margin-bottom: 8px;
+      font-family: 'Cormorant Infant', Georgia, serif; font-style: italic;
+      font-size: 0.62rem; color: rgba(61,32,32,0.4);
+    }
+    .ps-rsvp-btns { display: flex; gap: 5px; width: 100%; }
+    .ps-rsvp-yes {
+      flex: 1; padding: 6px 4px;
+      background: #c4736a; border: none; border-radius: 1px;
+      font-family: 'Cinzel', Georgia, serif; font-size: 0.38rem;
+      letter-spacing: 0.15em; color: white; text-transform: uppercase;
+    }
+    .ps-rsvp-no {
+      flex: 1; padding: 6px 4px;
+      background: transparent; border: 1px solid rgba(196,115,106,0.35); border-radius: 1px;
+      font-family: 'Cinzel', Georgia, serif; font-size: 0.38rem;
+      letter-spacing: 0.15em; color: rgba(61,32,32,0.5); text-transform: uppercase;
     }
 
     /* Gold corner accents */
@@ -502,33 +506,69 @@
           <!-- Status bar -->
           <div class="ps-statusbar"><span>heartlace.com/sophia-maximilian</span></div>
 
-          <!-- Candle -->
-          <div class="ps-candle">
-            <div class="ps-glow"></div>
-            <div class="ps-flame"></div>
-            <div class="ps-body"></div>
+          <!-- Slide 1: Hero -->
+          <div class="ps-slide ps-slide-1">
+            <div class="ps-candle">
+              <div class="ps-glow"></div>
+              <div class="ps-flame"></div>
+              <div class="ps-body"></div>
+            </div>
+            <p class="ps-eyebrow">Wir heiraten</p>
+            <p class="ps-names">Sophia<br>&amp; Maximilian</p>
+            <div class="ps-divider"></div>
+            <p class="ps-date">12. Juli 2025</p>
+            <p class="ps-location">Schloss Elmau · Bayern</p>
           </div>
 
-          <!-- Eyebrow -->
-          <p class="ps-eyebrow">Wir heiraten</p>
+          <!-- Slide 2: Details -->
+          <div class="ps-slide ps-slide-2">
+            <p class="ps-details-title">Details</p>
+            <div class="ps-detail-card">
+              <span class="ps-detail-icon">🕯</span>
+              <div class="ps-detail-info">
+                <span class="ps-detail-label">Datum</span>
+                <span class="ps-detail-value">12. Juli 2025</span>
+              </div>
+            </div>
+            <div class="ps-detail-card">
+              <span class="ps-detail-icon">⏰</span>
+              <div class="ps-detail-info">
+                <span class="ps-detail-label">Uhrzeit</span>
+                <span class="ps-detail-value">14:00 Uhr</span>
+              </div>
+            </div>
+            <div class="ps-detail-card">
+              <span class="ps-detail-icon">📍</span>
+              <div class="ps-detail-info">
+                <span class="ps-detail-label">Ort</span>
+                <span class="ps-detail-value">Schloss Elmau</span>
+              </div>
+            </div>
+            <div class="ps-detail-card">
+              <span class="ps-detail-icon">✨</span>
+              <div class="ps-detail-info">
+                <span class="ps-detail-label">Dresscode</span>
+                <span class="ps-detail-value">Festlich elegant</span>
+              </div>
+            </div>
+          </div>
 
-          <!-- Names -->
-          <p class="ps-names">Sophia<br>&amp; Maximilian</p>
+          <!-- Slide 3: RSVP -->
+          <div class="ps-slide ps-slide-3">
+            <p class="ps-rsvp-title">Werdet ihr<br>dabei sein?</p>
+            <p class="ps-rsvp-sub">RSVP bis 30. Mai</p>
+            <div class="ps-rsvp-field">Euer Name…</div>
+            <div class="ps-rsvp-btns">
+              <button class="ps-rsvp-yes">✓ &nbsp;Ja!</button>
+              <button class="ps-rsvp-no">✕ &nbsp;Nein</button>
+            </div>
+          </div>
 
-          <!-- Divider -->
-          <div class="ps-divider"></div>
-
-          <!-- Date -->
-          <p class="ps-date">12. Juli 2025</p>
-
-          <!-- Location -->
-          <p class="ps-location">Schloss Elmau · Bayern</p>
-
-          <!-- Pulsing dots -->
-          <div class="ps-dots">
-            <div class="ps-dot"></div>
-            <div class="ps-dot"></div>
-            <div class="ps-dot"></div>
+          <!-- Slide indicator dots -->
+          <div class="ps-nav">
+            <div class="ps-nav-dot"></div>
+            <div class="ps-nav-dot"></div>
+            <div class="ps-nav-dot"></div>
           </div>
         </div>
       </div>
